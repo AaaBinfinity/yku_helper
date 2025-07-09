@@ -1,0 +1,17 @@
+# 忽略 Python 虚拟环境
+.venv/
+
+# Python 缓存文件
+__pycache__/
+*.py[cod]
+
+# Jupyter Notebook 检查点
+.ipynb_checkpoints/
+
+# 编辑器配置
+.vscode/
+.idea/
+
+# 系统文件
+.DS_Store
+Thumbs.db
