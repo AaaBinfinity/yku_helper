@@ -3,6 +3,9 @@
 <head><title>成绩列表</title></head>
 <body>
     <h1>成绩展示</h1>
+    <p><strong>学号：</strong> {{ sno }}</p>
+    <p><strong>姓名：</strong> {{ sname }}</p>
+
     <table border="1">
         <tr>
             {% for header in grades[0].keys() %}
