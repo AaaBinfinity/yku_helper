@@ -2,187 +2,298 @@
 <html>
 <head>
     <title>成绩列表</title>
-<style>
-    :root {
-        --primary-color: #2a6fbb;
-        --primary-hover: #1f5ea4;
-        --background-color: #f4faff;
-        --card-bg: #ffffff;
-        --border-color: #d3e1f2;
-        --header-bg: #e3efff;
-        --text-color: #333;
-        --light-text: #6c757d;
-    }
-
-    body {
-        font-family: "微软雅黑", "Segoe UI", system-ui, sans-serif;
-        background-color: var(--background-color);
-        color: var(--text-color);
-        margin: 0;
-        padding: 30px;
-        line-height: 1.6;
-    }
-
-    h1 {
-        color: var(--primary-color);
-        margin-bottom: 1.5rem;
-        font-weight: 600;
-    }
-
-    .control-panel {
-        background: var(--card-bg);
-        padding: 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        margin-bottom: 2rem;
-    }
-
-    .form-group {
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    label {
-        font-weight: 500;
-        color: var(--text-color);
-        min-width: 80px;
-    }
-
-    select, input[type="text"] {
-        padding: 8px 12px;
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        font-size: 14px;
-        transition: border-color 0.3s;
-        flex: 1;
-        max-width: 300px;
-    }
-
-    select:focus, input[type="text"]:focus {
-        outline: none;
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 2px rgba(42, 111, 187, 0.1);
-    }
-
-    button {
-        padding: 8px 20px;
-        background-color: var(--primary-color);
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-
-    button:hover {
-        background-color: var(--primary-hover);
-        transform: translateY(-1px);
-    }
-
-    button:active {
-        transform: translateY(0);
-    }
-
-    .table-container {
-    width: 100%;
-    overflow-x: auto;
-    margin: 20px 0;
-    display: flex;
-    justify-content: center;
-}
-
-table {
-    min-width: 800px;  /* 最小宽度保证表格不会被挤压变形 */
-    max-width: 1200px; /* 最大宽度避免表格过宽 */
-    width: auto;      /* 自动宽度适应内容 */
-    border-collapse: collapse;
-    background-color: var(--card-bg);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-    border-radius: 8px;
-    overflow: hidden;
-    margin: 0 auto;   /* 水平居中 */
-}
-
-/* 保持原有样式 */
-th, td {
-    border: 1px solid var(--border-color);
-    padding: 12px 15px;
-    text-align: center;
-    white-space: nowrap; /* 防止文本换行 */
-}
-
-th {
-    background-color: var(--header-bg);
-    font-weight: 600;
-    color: var(--text-color);
-    position: sticky;
-    top: 0; /* 固定表头 */
-}
-
-/* 斑马纹效果 */
-tr:nth-child(even) {
-    background-color: rgba(227, 239, 255, 0.3);
-}
-
-/* 悬停效果 */
-tr:hover {
-    background-color: rgba(227, 239, 255, 0.5);
-}
-
-/* 响应式调整 */
-@media (max-width: 1200px) {
-    .table-container {
-        justify-content: flex-start;
-    }
-}
-    #loader {
-        display: none;
-        margin: 2rem auto;
-        text-align: center;
-    }
-
-    .spinner {
-        width: 40px;
-        height: 40px;
-        border: 5px solid rgba(204, 228, 255, 0.3);
-        border-top: 5px solid var(--primary-color);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin: 0 auto 1rem;
-    }
-
-    @keyframes spin {
-        to {
-            transform: rotate(360deg);
+    <style>
+        :root {
+            --primary-color: #2a6fbb;
+            --primary-hover: #1f5ea4;
+            --background-color: #f4faff;
+            --card-bg: #ffffff;
+            --border-color: #d3e1f2;
+            --header-bg: #e3efff;
+            --text-color: #333;
+            --light-text: #6c757d;
         }
-    }
 
-    .loading-text {
-        color: var(--light-text);
-        font-size: 14px;
-    }
-
-    @media (max-width: 768px) {
         body {
-            padding: 15px;
+            font-family: "微软雅黑", "Segoe UI", system-ui, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 30px;
+            line-height: 1.6;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .control-panel {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
         }
 
         .form-group {
-            flex-direction: column;
-            align-items: flex-start;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: 500;
+            color: var(--text-color);
+            min-width: 80px;
         }
 
         select, input[type="text"] {
-            width: 100%;
-            max-width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            flex: 1;
+            max-width: 300px;
         }
-    }
-</style>
+
+        select:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(42, 111, 187, 0.1);
+        }
+
+        button {
+            padding: 8px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        table {
+            min-width: 800px; /* 最小宽度保证表格不会被挤压变形 */
+            max-width: 1200px; /* 最大宽度避免表格过宽 */
+            width: auto; /* 自动宽度适应内容 */
+            border-collapse: collapse;
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 0 auto; /* 水平居中 */
+        }
+
+        /* 保持原有样式 */
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: center;
+            white-space: nowrap; /* 防止文本换行 */
+        }
+
+        th {
+            background-color: var(--header-bg);
+            font-weight: 600;
+            color: var(--text-color);
+            position: sticky;
+            top: 0; /* 固定表头 */
+        }
+
+        /* 斑马纹效果 */
+        tr:nth-child(even) {
+            background-color: rgba(227, 239, 255, 0.3);
+        }
+
+        /* 悬停效果 */
+        tr:hover {
+            background-color: rgba(227, 239, 255, 0.5);
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 1200px) {
+            .table-container {
+                justify-content: flex-start;
+            }
+        }
+
+        #loader {
+            display: none;
+            margin: 2rem auto;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 5px solid rgba(204, 228, 255, 0.3);
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            color: var(--light-text);
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .form-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            select, input[type="text"] {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+
+        /* 加在现有 style 最后 */
+        #ai-panel-toggle {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            z-index: 9999;
+        }
+
+        #ai-panel {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 360px;
+            max-height: 80vh;
+            overflow-y: auto;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            display: none;
+            z-index: 9998;
+        }
+
+        #ai-panel h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        #ai-panel pre {
+            white-space: pre-wrap;
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-color);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 20px;
+                margin-bottom: 1rem;
+            }
+
+            p {
+                font-size: 14px;
+            }
+
+            .form-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            select,
+            input[type="text"] {
+                width: 100%;
+                max-width: 100%;
+                font-size: 14px;
+            }
+
+            button[type="submit"] {
+                width: 100%;
+                margin-top: 10px;
+                font-size: 14px;
+            }
+
+            th,
+            td {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+
+            .table-container {
+                justify-content: flex-start;
+                overflow-x: auto;
+            }
+
+            table {
+                width: 100%;
+                min-width: 800px;
+            }
+
+            #ai-panel-toggle {
+                right: 10px;
+                bottom: 10px;
+                padding: 6px 12px;
+                font-size: 12px;
+                border-radius: 30px;
+            }
+
+            #ai-panel {
+                width: 95vw;
+                right: 2.5vw;
+                top: 60px;
+                padding: 12px;
+                border-radius: 8px;
+            }
+        }
+
+    </style>
 </head>
 
 <body>
@@ -252,6 +363,16 @@ tr:hover {
     <thead></thead>
     <tbody></tbody>
 </table>
+<!-- AI 分析浮动按钮 -->
+<button id="ai-panel-toggle">AI 分析</button>
+
+<!-- AI 分析结果窗口 -->
+<div id="ai-panel">
+    <h3>成绩分析结果</h3>
+    <div id="ai-analysis-loading" style="color: var(--light-text); display: none;">正在分析中，请稍候...</div>
+    <pre id="ai-analysis-content"></pre>
+</div>
+
 <script>
     // 表单提交时调用 loadGrades()
     document.getElementById("filter-form").addEventListener("submit", function (e) {
@@ -386,6 +507,44 @@ tr:hover {
 
     // 初次加载
     loadGrades();
+    document.getElementById("ai-panel-toggle").addEventListener("click", async function () {
+        const panel = document.getElementById("ai-panel");
+        const content = document.getElementById("ai-analysis-content");
+        const loading = document.getElementById("ai-analysis-loading");
+
+        // 如果已打开就关闭
+        if (panel.style.display === "block") {
+            panel.style.display = "none";
+            return;
+        }
+
+        // 展示面板、清空旧内容
+        panel.style.display = "block";
+        content.textContent = "";
+        loading.style.display = "block";
+
+        // 获取当前筛选参数
+        const kksj = document.getElementById("kksj").value;
+        const kcxz = document.getElementById("kcxz").value;
+        const kcmc = document.getElementById("kcmc").value;
+        const xsfs = document.getElementById("xsfs").value;
+        const params = new URLSearchParams({kksj, kcxz, kcmc, xsfs});
+
+        try {
+            const res = await fetch("/api/aigrades?" + params.toString());
+            const data = await res.json();
+
+            if (!data.success) {
+                content.textContent = "❌ 分析失败：" + (data.message || "未知错误");
+            } else {
+                content.textContent = data.analysis;
+            }
+        } catch (err) {
+            content.textContent = "❌ 请求出错：" + err.message;
+        } finally {
+            loading.style.display = "none";
+        }
+    });
 </script>
 
 </body>
