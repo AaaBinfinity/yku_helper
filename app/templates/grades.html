@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head><title>成绩列表</title></head>
+<body>
+    <h1>成绩展示</h1>
+    <table border="1">
+        <tr>
+            {% for header in grades[0].keys() %}
+            <th>{{ header }}</th>
+            {% endfor %}
+        </tr>
+        {% for row in grades %}
+        <tr>
+            {% for item in row.values() %}
+            <td>{{ item }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

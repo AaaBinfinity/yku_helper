@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>登录教务系统</title>
+</head>
+<body>
+    <h1>成绩查询</h1>
+    {% if error %}
+        <p style="color:red">{{ error }}</p>
+    {% endif %}
+    <form method="post">
+        <label>账号：</label><input name="username"><br>
+        <label>密码：</label><input name="password" type="password"><br>
+        <label>验证码：</label><input name="captcha"><br>
+        <img id="captcha-img" src="data:image/png;base64,{{ captcha }}" alt="验证码" style="vertical-align: middle;">
+        <button type="button" onclick="refreshCaptcha()">刷新</button><br><br>
+        <input type="submit" value="查询成绩">
+    </form>
+
+    <script>
+        function refreshCaptcha() {
+            fetch("/captcha")
+                .then(response => response.json())
+                .then(data => {
+                    const img = document.getElementById("captcha-img");
+                    img.src = "data:image/png;base64," + data.captcha;
+                });
+        }
+    </script>
+</body>
+</html>
