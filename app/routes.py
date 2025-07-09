@@ -75,17 +75,6 @@ def grades():
         grades_logger.warning("❌ 成绩查询失败：未登录或会话过期")
         return redirect(url_for("main.login"))
 
-    grades_data = get_grades(_internal_session)
-
-    sno = session.get("username", "未知学号")
-    sname = session.get("student_name", "未知姓名")
-
-    grades_logger.info(f"📋 成绩查询 - 学号: {sno}, 姓名: {sname}, 查询到 {len(grades_data)} 条记录")
-
-    for idx, grade in enumerate(grades_data, start=1):
-        grades_logger.info(
-            f"课程: {grade.get('课程名称', 'N/A')}，成绩: {grade.get('成绩', 'N/A')}"
-        )
 
     return render_template("grades.html")
 
@@ -138,6 +127,7 @@ def api_grades():
     global _internal_session
 
     if not _internal_session:
+        grades_logger.warning("❌ 成绩查询失败：未登录或会话过期")
         return jsonify({"success": False, "msg": "尚未登录"}), 401
 
     # 获取筛选参数
@@ -157,6 +147,13 @@ def api_grades():
 
     sno = session.get("username", "未知学号")
     sname = session.get("student_name", "未知姓名")
+
+    # ✅ 记录查询日志
+    grades_logger.info(
+        f"✅ 成绩查询 - 学号: {sno}, 姓名: {sname}, "
+        f"开课学期: '{kksj}', 课程性质: '{kcxz}', 课程名称关键词: '{kcmc}', 显示方式: '{xsfs}', "
+        f"返回记录数: {len(grades_data)}"
+    )
 
     return jsonify({
         "success": True,
