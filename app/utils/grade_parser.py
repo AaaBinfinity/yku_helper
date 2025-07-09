@@ -1,12 +1,23 @@
 from bs4 import BeautifulSoup
 
-def get_grades(session):
+def get_grades(session, kksj="", kcxz="", kcmc="", xsfs="all"):
+    """
+    获取学生成绩。
+
+    参数说明:
+    - session: 登录后的 requests.Session 对象
+    - kksj: 开课学期
+    - kcxz: 课程性质
+    - kcmc: 课程名称关键词（默认空字符串）
+    - xsfs: 显示方式（默认 "all" 表示全部）
+    """
     query_url = "https://jwgl.yku.edu.cn/jsxsd/kscj/cjcx_list"
+
     form_data = {
-        "kksj": "2023-2024-2",
-        "kcxz": "10",
-        "kcmc": "",
-        "xsfs": "all"
+        "kksj": kksj,
+        "kcxz": kcxz,
+        "kcmc": kcmc,
+        "xsfs": xsfs
     }
 
     headers = {

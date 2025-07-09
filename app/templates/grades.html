@@ -1,24 +1,62 @@
 <!DOCTYPE html>
 <html>
-<head><title>成绩列表</title></head>
+<head>
+    <title>成绩列表</title>
+</head>
 <body>
     <h1>成绩展示</h1>
-    <p><strong>学号：</strong> {{ sno }}</p>
-    <p><strong>姓名：</strong> {{ sname }}</p>
+    <p><strong>学号：</strong> <span id="sno"></span></p>
+    <p><strong>姓名：</strong> <span id="sname"></span></p>
 
-    <table border="1">
-        <tr>
-            {% for header in grades[0].keys() %}
-            <th>{{ header }}</th>
-            {% endfor %}
-        </tr>
-        {% for row in grades %}
-        <tr>
-            {% for item in row.values() %}
-            <td>{{ item }}</td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
+    <table border="1" id="grades-table">
+        <thead></thead>
+        <tbody></tbody>
     </table>
+
+    <script>
+        async function loadGrades() {
+            const res = await fetch("/api/grades");
+            const data = await res.json();
+
+            if (!data.success) {
+                alert("未登录或登录已失效，请返回登录页");
+                location.href = "/";
+                return;
+            }
+
+            const { sno, sname, grades } = data.data;
+            document.getElementById("sno").textContent = sno;
+            document.getElementById("sname").textContent = sname;
+
+            const tableHead = document.querySelector("#grades-table thead");
+            const tableBody = document.querySelector("#grades-table tbody");
+
+            tableHead.innerHTML = "";
+            tableBody.innerHTML = "";
+
+            if (grades.length > 0) {
+                const headers = Object.keys(grades[0]);
+                const headerRow = document.createElement("tr");
+                headers.forEach(h => {
+                    const th = document.createElement("th");
+                    th.textContent = h;
+                    headerRow.appendChild(th);
+                });
+                tableHead.appendChild(headerRow);
+
+                grades.forEach(row => {
+                    const tr = document.createElement("tr");
+                    Object.values(row).forEach(val => {
+                        const td = document.createElement("td");
+                        td.textContent = val;
+                        tr.appendChild(td);
+                    });
+                    tableBody.appendChild(tr);
+                });
+            }
+        }
+
+        loadGrades();
+    </script>
 </body>
 </html>

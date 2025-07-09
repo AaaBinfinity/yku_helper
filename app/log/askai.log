@@ -1,2 +1,0 @@
-2025-07-09 19:11:31,307 [INFO] ···发送请求: 你好豆包！
-2025-07-09 19:11:32,166 [INFO] ····· 返回结果: {"choices":[{"finish_reason":"stop","index":0,"logprobs":null,"message":{"content":"请你详细描述一下问题哦，这样我才能更准确地为你解答。 ","role":"assistant"}}],"created":1752059492,"id":"0217520594914483febc48cf049325d146c2c1eb2db3646391bd0","model":"doubao-1-5-lite-32k-250115","service_tier":"default","object":"chat.completion","usage":{"completion_tokens":19,"prompt_tokens":17,"total_tokens":36,"prompt_tokens_details":{"cached_tokens":0},"completion_tokens_details":{"reasoning_tokens":0}}}

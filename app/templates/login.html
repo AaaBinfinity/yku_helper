@@ -1,31 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>登录教务系统</title>
+    <title>yku小工具</title>
 </head>
 <body>
-    <h1>成绩查询</h1>
-    {% if error %}
-        <p style="color:red">{{ error }}</p>
-    {% endif %}
-    <form method="post">
-        <label>账号：</label><input name="username"><br>
-        <label>密码：</label><input name="password" type="password"><br>
-        <label>验证码：</label><input name="captcha"><br>
-        <img id="captcha-img" src="data:image/png;base64,{{ captcha }}" alt="验证码" style="vertical-align: middle;">
+    <h1>成绩查询系统</h1>
+    <p id="error" style="color:red"></p>
+    <form onsubmit="return login(event)">
+        <label>学号：</label><input id="username"><br>
+        <label>密码：</label><input id="password" type="password"><br>
+        <label>验证码（注意区分大小写）：</label><input id="captcha"><br>
+        <img id="captcha-img" src="" alt="验证码" style="vertical-align: middle;">
         <button type="button" onclick="refreshCaptcha()">刷新</button><br><br>
-        <input type="submit" value="查询成绩">
+        <button type="submit">登录</button>
     </form>
 
     <script>
         function refreshCaptcha() {
-            fetch("/captcha")
-                .then(response => response.json())
+            fetch("/api/captcha")
+                .then(res => res.json())
                 .then(data => {
-                    const img = document.getElementById("captcha-img");
-                    img.src = "data:image/png;base64," + data.captcha;
+                    document.getElementById("captcha-img").src = "data:image/png;base64," + data.captcha;
                 });
         }
+
+        async function login(event) {
+            event.preventDefault();
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const captcha = document.getElementById("captcha").value;
+
+            const res = await fetch("/api/login", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ username, password, captcha })
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                window.location.href = "/grades";
+            } else {
+                document.getElementById("error").textContent = data.msg;
+                refreshCaptcha();
+            }
+        }
+
+        refreshCaptcha(); // 页面加载时刷新一次验证码
     </script>
 </body>
 </html>
