@@ -412,15 +412,38 @@
             tableBody.innerHTML = "";
 
             if (grades.length > 0) {
+                // 按学期从近到远排序
+                grades.sort((a, b) => {
+                    const termA = a["开课学期"] || "";
+                    const termB = b["开课学期"] || "";
+                    return termB.localeCompare(termA);
+                });
                 const preferredOrder = [
                     "序号", "课程名称", "成绩", "绩点", "成绩标识",
                     "开课学期", "补重学期", "课程编号", "学分", "总学时",
                     "分组名", "考核方式", "考试性质", "课程属性", "课程性质", "课程类别"
                 ];
 
+                // 学期颜色分配（从新到旧）
                 const termColors = {};
-                const colorPalette = ["#0066cc", "#a000d7", "#00a494", "#949900", "#cc00cc", "#ff6600"];
-                let colorIndex = 0;
+                const colorPalette = [
+                    "#4285F4", // Google Blue
+                    "#714a7e", // Muted Purple
+                    "#36787a", // Cadet Blue
+                    "#D2B48C", // Tan
+                    "#325d81", // Steel Blue
+                    "#783689", // Medium Orchid
+                    "#1b9089", // Light Sea Green
+                    "#466a94", // Light Slate Gray
+                    "#7048b1"  // Medium Purple
+                ];
+
+                const uniqueTerms = [...new Set(grades.map(item => item["开课学期"] || "默认"))]
+                    .sort((a, b) => b.localeCompare(a));
+
+                uniqueTerms.forEach((term, index) => {
+                    termColors[term] = colorPalette[index % colorPalette.length];
+                });
 
                 const headerRow = document.createElement("tr");
                 preferredOrder.forEach(h => {
