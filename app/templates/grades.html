@@ -2,20 +2,170 @@
 <html>
 <head>
     <title>成绩列表</title>
+    <style>
+        body {
+            font-family: "微软雅黑", sans-serif;
+            background-color: #f4faff;
+            color: #333;
+            margin: 30px;
+        }
+
+        h1 {
+            color: #2a6fbb;
+        }
+
+        label {
+            margin-right: 20px;
+        }
+
+        select, input[type="text"] {
+            padding: 5px;
+            margin-left: 5px;
+        }
+
+        button {
+            padding: 6px 16px;
+            background-color: #2a6fbb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1f5ea4;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+        }
+
+        th, td {
+            border: 1px solid #d3e1f2;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #e3efff;
+            font-weight: bold;
+        }
+
+        #loader {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 5px solid #cce4ff;
+            border-top: 5px solid #2a6fbb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <h1>成绩展示</h1>
-    <p><strong>学号：</strong> <span id="sno"></span></p>
-    <p><strong>姓名：</strong> <span id="sname"></span></p>
+<h1>成绩展示</h1>
+<p><strong>学号：</strong> <span id="sno"></span></p>
+<p><strong>姓名：</strong> <span id="sname"></span></p>
 
-    <table border="1" id="grades-table">
-        <thead></thead>
-        <tbody></tbody>
-    </table>
+<form id="filter-form">
+    <label>开课学期：
+        <select id="kksj">
+            <option value="">全部</option>
+            <option value="2025-2026-1">2025-2026-1</option>
+            <option value="2024-2025-2">2024-2025-2</option>
+            <option value="2024-2025-1">2024-2025-1</option>
+            <option value="2023-2024-2">2023-2024-2</option>
+            <option value="2023-2024-1">2023-2024-1</option>
+            <option value="2022-2023-2">2022-2023-2</option>
+            <option value="2022-2023-1">2022-2023-1</option>
+            <option value="2021-2022-2">2021-2022-2</option>
+            <option value="2021-2022-1">2021-2022-1</option>
+            <option value="2020-2021-2">2020-2021-2</option>
+            <option value="2020-2021-1">2020-2021-1</option>
+            <option value="2019-2020-2">2019-2020-2</option>
+            <option value="2019-2020-1">2019-2020-1</option>
 
-    <script>
-        async function loadGrades() {
-            const res = await fetch("/api/grades");
+        </select>
+    </label>
+
+    <label>课程性质：
+        <select id="kcxz">
+            <option value="">全部</option>
+            <option value="01">公共课</option>
+            <option value="02">公共基础课</option>
+            <option value="03">专业基础课</option>
+            <option value="04">专业课</option>
+            <option value="05">专业选修课</option>
+            <option value="06">公共选修课</option>
+            <option value="07">集中实践环节</option>
+            <option value="09">其他</option>
+            <option value="10">公共必修课</option>
+            <option value="11">基础课</option>
+            <option value="12">实践教学课</option>
+        </select>
+    </label>
+
+    <label>课程名称关键词：
+        <input type="text" id="kcmc" placeholder="支持模糊匹配">
+    </label>
+
+    <label>显示方式：
+        <select id="xsfs">
+            <option value="all">所有成绩</option>
+            <option value="max">最好成绩</option>
+        </select>
+    </label>
+
+    <button type="submit">查询</button>
+</form>
+
+<br>
+<div id="loader">
+    <div class="spinner"></div>
+    <p>正在加载成绩，请稍候...</p>
+</div>
+
+<table border="1" id="grades-table">
+    <thead></thead>
+    <tbody></tbody>
+</table>
+<script>
+    // 表单提交时调用 loadGrades()
+    document.getElementById("filter-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        loadGrades();
+    });
+
+    async function loadGrades() {
+        const loader = document.getElementById("loader");
+        loader.style.display = "block"; // 显示加载动画
+
+        const kksj = document.getElementById("kksj").value;
+        const kcxz = document.getElementById("kcxz").value;
+        const kcmc = document.getElementById("kcmc").value;
+        const xsfs = document.getElementById("xsfs").value;
+
+        const params = new URLSearchParams({kksj, kcxz, kcmc, xsfs});
+
+        try {
+            const res = await fetch("/api/grades?" + params.toString());
             const data = await res.json();
 
             if (!data.success) {
@@ -24,7 +174,7 @@
                 return;
             }
 
-            const { sno, sname, grades } = data.data;
+            const {sno, sname, grades} = data.data;
             document.getElementById("sno").textContent = sno;
             document.getElementById("sname").textContent = sname;
 
@@ -35,9 +185,18 @@
             tableBody.innerHTML = "";
 
             if (grades.length > 0) {
-                const headers = Object.keys(grades[0]);
+                const preferredOrder = [
+                    "序号", "课程名称", "成绩", "绩点", "成绩标识",
+                    "开课学期", "补重学期", "课程编号", "学分", "总学时",
+                    "分组名", "考核方式", "考试性质", "课程属性", "课程性质", "课程类别"
+                ];
+
+                const termColors = {};
+                const colorPalette = ["#0066cc", "#9900cc", "#cc3300", "#009933", "#cc00cc", "#ff6600"];
+                let colorIndex = 0;
+
                 const headerRow = document.createElement("tr");
-                headers.forEach(h => {
+                preferredOrder.forEach(h => {
                     const th = document.createElement("th");
                     th.textContent = h;
                     headerRow.appendChild(th);
@@ -46,17 +205,82 @@
 
                 grades.forEach(row => {
                     const tr = document.createElement("tr");
-                    Object.values(row).forEach(val => {
+
+                    const term = row["开课学期"] || "默认";
+                    if (!termColors[term]) {
+                        termColors[term] = colorPalette[colorIndex % colorPalette.length];
+                        colorIndex++;
+                    }
+                    const rowColor = termColors[term];
+
+                    preferredOrder.forEach(key => {
                         const td = document.createElement("td");
-                        td.textContent = val;
+                        td.textContent = row[key] ?? "";
+
+                        td.style.color = rowColor;
+
+                        if (key === "成绩") {
+                            const value = row[key] ?? "";
+                            const score = parseFloat(value);
+
+                            let isFailRow = false; // 用于标记是否该整行为失败
+
+                            if (key === "成绩") {
+                                const value = row[key] ?? "";
+                                const score = parseFloat(value);
+
+                                // 数值成绩处理
+                                if (!isNaN(score)) {
+                                    if (score >= 85) {
+                                        td.style.color = "green";
+                                        td.style.fontWeight = "bold";
+                                    } else if (score < 60) {
+                                        td.style.color = "red";
+                                        td.style.fontWeight = "bold";
+                                        isFailRow = true;
+                                    }
+                                }
+
+                                // 文本成绩处理（如 不及格、不合格 等）
+                                const failKeywords = ["不及格", "不合格", "未通过", "fail"];
+                                if (failKeywords.some(k => value.includes(k))) {
+                                    td.style.color = "red";
+                                    td.style.fontWeight = "bold";
+                                    isFailRow = true;
+                                }
+                                if (isFailRow) {
+                                    tr.style.backgroundColor = "#ffe5e5";
+                                }
+                            }
+
+                        }
+
+
                         tr.appendChild(td);
                     });
+
                     tableBody.appendChild(tr);
                 });
+            } else {
+                const tr = document.createElement("tr");
+                const td = document.createElement("td");
+                td.colSpan = 16;
+                td.textContent = "暂无符合条件的成绩记录";
+                td.style.textAlign = "center";
+                tr.appendChild(td);
+                tableBody.appendChild(tr);
             }
+        } catch (err) {
+            alert("请求出错：" + err.message);
+        } finally {
+            loader.style.display = "none"; // 不管成功或失败，都隐藏动画
         }
+    }
 
-        loadGrades();
-    </script>
+
+    // 初次加载
+    loadGrades();
+</script>
+
 </body>
 </html>

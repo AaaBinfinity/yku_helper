@@ -126,36 +126,38 @@ def api_login():
 
     return jsonify({"success": True, "msg": "登录成功", "student_name": student_name})
 
-
 @main.route("/api/grades")
 def api_grades():
     """
-    API 成绩查询接口（含日志）：
-    - 检查登录状态
-    - 查询成绩数据
-    - 返回 JSON 响应
+    支持通过查询参数筛选成绩：
+    - kksj: 开课学期
+    - kcxz: 课程性质
+    - kcmc: 课程名称（关键词模糊匹配）
+    - xsfs: 显示方式（all / max）
     """
     global _internal_session
 
     if not _internal_session:
-        grades_logger.warning("❌ API成绩查询失败：未登录或会话过期")
         return jsonify({"success": False, "msg": "尚未登录"}), 401
 
-    # 查询成绩数据
-    grades_data = get_grades(_internal_session)
+    # 获取筛选参数
+    kksj = request.args.get("kksj", "")
+    kcxz = request.args.get("kcxz", "")
+    kcmc = request.args.get("kcmc", "")
+    xsfs = request.args.get("xsfs", "all")
+
+    # 获取成绩数据
+    grades_data = get_grades(
+        _internal_session,
+        kksj=kksj,
+        kcxz=kcxz,
+        kcmc=kcmc,
+        xsfs=xsfs
+    )
+
     sno = session.get("username", "未知学号")
     sname = session.get("student_name", "未知姓名")
 
-    # 日志记录：查询总数
-    grades_logger.info(f"📋 API成绩查询 - 学号: {sno}, 姓名: {sname}, 查询到 {len(grades_data)} 条记录")
-
-    # 日志记录：详细课程成绩
-    for grade in grades_data:
-        course = grade.get("课程名称", "N/A")
-        score = grade.get("成绩", "N/A")
-        grades_logger.info(f"课程: {course}，成绩: {score}")
-
-    # 返回 JSON 响应
     return jsonify({
         "success": True,
         "data": {
