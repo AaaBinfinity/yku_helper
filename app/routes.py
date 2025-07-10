@@ -67,6 +67,22 @@ def grades():
     return render_template("grades.html")
 
 
+@main.route("/home")
+def home():
+    username = session.get("username")
+    student_name = session.get("student_name")
+
+    if not username:
+        return redirect(url_for("main.login"))
+
+    return render_template("home.html", username=username, student_name=student_name)
+
+
+@main.route("/about")
+def about():
+    return render_template("about.html")
+
+
 @main.route("/api/captcha")
 def captcha():
     img_base64, cookies = get_captcha_base64()

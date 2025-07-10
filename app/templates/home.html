@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+        
+        :root {
+            --primary-color: #2a6fbb;
+            --primary-dark: #1f5ea4;
+            --secondary-color: #f4faff;
+            --text-color: #333;
+            --light-gray: #f0f0f0;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', "微软雅黑", sans-serif;
+            background-color: var(--secondary-color);
+            margin: 0;
+            padding: 40px 60px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .header-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .clock {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 24px;
+            font-size: 16px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(42, 111, 187, 0.2);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(42, 111, 187, 0.3);
+        }
+        
+        .btn-exit {
+            background-color: #ccc;
+            color: #333;
+            padding: 8px 16px;
+            margin-left: 20px;
+            box-shadow: none;
+        }
+        
+        .btn-exit:hover {
+            background-color: #bbb;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .welcome-text {
+            font-size: 18px;
+            margin-bottom: 30px;
+            animation: slideUp 0.8s ease-out;
+        }
+        
+        hr {
+            border: 0;
+            height: 1px;
+            background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(42, 111, 187, 0.5), rgba(0,0,0,0));
+            margin: 30px 0;
+        }
+        
+        h2 {
+            color: var(--primary-color);
+            margin: 25px 0 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        ul {
+            text-align: left;
+            max-width: 700px;
+            margin: 0 auto;
+            padding-left: 20px;
+        }
+        
+        li {
+            margin-bottom: 12px;
+            position: relative;
+            padding-left: 30px;
+            list-style-type: none;
+        }
+        
+        li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 5px;
+            width: 20px;
+            height: 20px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            opacity: 0.2;
+        }
+        
+        .feature-icon {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        
+        .footer {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #666;
+            animation: fadeIn 1.2s ease-out;
+        }
+        
+        .quick-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 30px 20px;
+            }
+            
+            .header-wrapper {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            h1 {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>     
+    <div class="container">
+        <div class="header-wrapper">
+            <h1>
+                <i class="fas fa-hand-wave feature-icon"></i>
+                欢迎，{{ student_name or "同学" }}！
+                <button onclick="window.location.href='/'" class="btn btn-exit">
+                    <i class="fas fa-sign-out-alt"></i> 退出
+                </button>
+            </h1>
+            <div class="clock" id="clock">
+                <i class="fas fa-clock"></i>
+                <span id="time"></span>
+            </div>
+        </div>
+        
+        <p class="welcome-text">
+            <i class="fas fa-graduation-cap feature-icon"></i>
+            欢迎使用 <strong>YKU 小助手</strong> —— 为营口理工学院学子量身打造的学习辅助平台。
+        </p>
+
+        <hr>
+
+        <h2><i class="fas fa-list feature-icon"></i> 当前功能</h2>
+        <ul>
+            <li>
+                <i class="fas fa-search feature-icon"></i>
+                <strong>成绩查询：</strong> 轻松筛选课程，支持模糊搜索、类型分类、开课学期筛选等。
+            </li>
+            <li>
+                <i class="fas fa-brain feature-icon"></i>
+                <strong>成绩分析（AI）：</strong> 智能分析个人成绩，识别风险，提供改进建议。
+            </li>
+            <li>
+                <i class="fas fa-calendar-alt feature-icon"></i>
+                <strong>本站资源（即将推出）：</strong> 题库资源，辅助复习提分
+            </li>
+            <li>
+                <i class="fas fa-book feature-icon"></i>
+                <strong> 成绩可视化分析（开发中）：</strong>  可视化成绩分析，直观的查看成绩
+            </li>
+        </ul>
+
+        <h2><i class="fas fa-rocket feature-icon"></i> 快速入口</h2>
+<div class="quick-actions">
+    <a href="{{ url_for('main.grades') }}" class="btn pulse">
+        <i class="fas fa-chart-line"></i> 成绩查询
+    </a>    
+    <a href="https://jwgl.yku.edu.cn/jsxsd/" class="btn pulse">
+        <i class="fas fa-chart-line"></i> 教务系统
+    </a>
+    <a href="#" class="btn">
+        <i class="fas fa-book-open"></i> 本站资源
+    </a>
+    <a href="{{ url_for('main.about') }}" class="btn pulse">
+        <i class="fas fa-info-circle"></i> 关于本站
+    </a>
+</div>
+
+        <hr>
+
+        <div class="footer">
+            <p>
+                <i class="fas fa-info-circle"></i> 本系统为非官方平台，数据均由用户登录授权后从教务系统抓取。
+            </p>
+            <p>
+                <i class="fas fa-envelope"></i> 如有建议或想参与开发，欢迎联系开发者 Binfinity（binfinity@qq.com）
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Clock function
+        function updateClock() {
+            const now = new Date();
+            const timeElement = document.getElementById('time');
+            
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            
+            timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+        }
+        
+        // Update clock every second
+        setInterval(updateClock, 1000);
+        updateClock(); // Initial call
+        
+        // Add animation to features on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const features = document.querySelectorAll('li');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'slideUp 0.5s ease-out forwards';
+                        entry.target.style.opacity = '1';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            features.forEach((feature, index) => {
+                feature.style.opacity = '0';
+                feature.style.animationDelay = `${index * 0.1}s`;
+                observer.observe(feature);
+            });
+        });
+    </script>
+</body>
+</html>
