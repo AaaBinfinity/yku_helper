@@ -42,20 +42,22 @@
         资源可能会随时更新或删除，请及时下载保存。<br>
         <strong>注意：</strong>由于资源数量较多，页面加载可能需要一些时间。<br>
         <strong>免责声明：</strong>本站资源仅供学习交流使用，未经授权请勿用于商业用途。<br>
-        <strong>友情提示：</strong> 本站资源均为用户自愿分享，本站不对资源的合法性和完整性负责。<br>
+        <strong>友情提示：</strong> 本站资源均为用户自愿分享，本站不对资源的合法性和完整性负责。<br><br><br>
+        由于本站暂未配置SSL证书，下载资源时可能会触发浏览器的安全提醒，点击保留文件即可<br><br>
         <strong>温馨提示：</strong>如果您有任何资源分享或建议，请通过binfinity@qq.com与我们联系。<br>
 
     </div>
-<h3>当前处于测试阶段，加载可能缓慢或存在问题，敬请谅解。</h3>.
+<h3>当前处于测试阶段，加载可能缓慢或存在问题，敬请谅解。</h3>
     {% for item in resources.data %}
         <div style="border:1px solid #ccc; padding:10px; margin:10px;">
             <h3>{{ item.title }}</h3>
             <p><strong>作者：</strong>{{ item.author or '未知' }} | <strong>浏览：</strong>{{ item.view_count }} 次</p>
             <p>{{ item.description or '暂无描述' }}</p>
             <p>发布时间：{{ item.publish_time }}</p>
-            <a href="{{ url_for('main.download_resource') }}?id={{ item.id }}" target="_blank">
-                📥 点击下载
-            </a>
+            <a href="{{ url_for('main.download_resource') }}?id={{ item.id }}" download>
+    点击下载资源
+</a>
+
         </div>
     {% endfor %}
 </body>
