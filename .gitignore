@@ -1,6 +1,9 @@
 # 忽略 Python 虚拟环境
 .venv/
 
+getpsw/
+
+
 # Python 缓存文件
 __pycache__/
 *.py[cod]
