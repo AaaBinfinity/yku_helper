@@ -1,6 +1,8 @@
 import os
 import logging
-from flask import Blueprint, render_template, request, redirect, url_for, session, jsonify
+from flask import Blueprint, abort, flash, render_template, request, redirect, send_from_directory, url_for, session, jsonify
+
+from app.utils.resources import add_resource, get_all_resources, get_resource_by_id
 from .utils.session_handler import login_and_get_session, get_captcha_base64
 from .utils.grade_parser import get_grades
 from .utils.student_lookup import get_student_name
@@ -166,3 +168,46 @@ def analyze_grades_auto():
         return jsonify({"success": True, "sno": sno, "sname": sname, "analysis": result})
     except Exception as e:
         return jsonify({"success": False, "message": f"分析失败: {str(e)}"}), 500
+
+
+# ========== 展示资源 ==========
+@main.route("/resources")
+def show_resources():
+    data = get_all_resources()
+    return render_template("resources.html", resources={"data": data})
+
+# ========== 下载资源 ==========
+@main.route("/download_resource")
+def download_resource():
+    resource_id = request.args.get("id", type=int)
+    if not resource_id:
+        return "参数错误", 400
+
+    row = get_resource_by_id(resource_id)
+    if not row:
+        return abort(404, "资源不存在或已下架")
+
+    filepath = row["path"]
+    filename = os.path.basename(filepath)
+    folder = os.path.dirname(filepath)
+
+    return send_from_directory(folder, filename, as_attachment=True)
+
+# ========== 上传资源 ==========
+@main.route("/upload", methods=["GET", "POST"])
+def upload_resource():
+    if request.method == "POST":
+        title = request.form.get("title")
+        path = request.form.get("path")
+        description = request.form.get("description")
+        author = request.form.get("author")
+
+        if not title or not path:
+            flash("标题和路径为必填项")
+            return redirect(url_for("main.upload_resource"))
+
+        add_resource(title, path, description, author)
+        flash("上传成功")
+        return redirect(url_for("main.show_resources"))
+
+    return render_template("upload_resource.html")

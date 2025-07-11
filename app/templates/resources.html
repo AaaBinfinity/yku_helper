@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>本站资源 - YKU 小助手</title>
+    <style>
+        .resource-item {
+            border: 1px solid #ccc;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .download-link {
+            display: block;
+            margin: 5px 0;
+            padding: 8px;
+            background-color: #e9f7fe;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #31708f;
+        }
+        .download-link:hover {
+            background-color: #d4edf8;
+        }
+        .warning-box {
+            background-color: #fff3cd; 
+            border: 1px solid #ffeeba; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>📚 本站资源分享</h1>
+
+    <!-- 说明提示 -->
+    <div class="warning-box">
+        ⚠️ <strong>资源说明：</strong><br>
+        本页面提供了本站收集的各类学习资源，包括课程资料、电子书籍等。<br>
+        资源可能会随时更新或删除，请及时下载保存。<br>
+        <strong>注意：</strong>由于资源数量较多，页面加载可能需要一些时间。<br>
+        <strong>免责声明：</strong>本站资源仅供学习交流使用，未经授权请勿用于商业用途。<br>
+        <strong>友情提示：</strong> 本站资源均为用户自愿分享，本站不对资源的合法性和完整性负责。<br>
+        <strong>温馨提示：</strong>如果您有任何资源分享或建议，请通过binfinity@qq.com与我们联系。<br>
+
+    </div>
+<h3>当前处于测试阶段，加载可能缓慢或存在问题，敬请谅解。</h3>.
+    {% for item in resources.data %}
+        <div style="border:1px solid #ccc; padding:10px; margin:10px;">
+            <h3>{{ item.title }}</h3>
+            <p><strong>作者：</strong>{{ item.author or '未知' }} | <strong>浏览：</strong>{{ item.view_count }} 次</p>
+            <p>{{ item.description or '暂无描述' }}</p>
+            <p>发布时间：{{ item.publish_time }}</p>
+            <a href="{{ url_for('main.download_resource') }}?id={{ item.id }}" target="_blank">
+                📥 点击下载
+            </a>
+        </div>
+    {% endfor %}
+</body>
+</html>
