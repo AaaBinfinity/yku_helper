@@ -32,29 +32,7 @@ main = Blueprint("main", __name__)
 # ========== 路由实现 ==========
 @main.route("/", methods=["GET", "POST"])
 def login():
-    if request.method == "POST":
-        username = request.form.get("username", "").strip()
-        password = request.form.get("password", "").strip()
-        captcha_code = request.form.get("captcha", "").strip()
-        captcha_cookies = session.get("captcha_cookies", {})
-
-        student_name = get_student_name(username)
-        logging.info(f"📥 登录尝试 - 学号: {username}, 姓名: {student_name}")
-
-        user_session = login_and_get_session(username, password, captcha_code, captcha_cookies)
-        if not user_session:
-            logging.warning(f"❌ 登录失败 - 学号: {username}")
-            img_base64, cookies = get_captcha_base64()
-            session["captcha_cookies"] = cookies
-            return render_template("login.html", error="登录失败", captcha=img_base64)
-
-        session["username"] = username
-        session["student_name"] = student_name
-        session["cookies"] = user_session.cookies.get_dict()
-
-        logging.info(f"✅ 登录成功 - 学号: {username}")
-        return redirect(url_for("main.grades"))
-
+    
     img_base64, cookies = get_captcha_base64()
     session["captcha_cookies"] = cookies
     return render_template("login.html", captcha=img_base64)
