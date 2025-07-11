@@ -12,3 +12,13 @@ API_KEY = os.getenv("API_KEY")
 AI_MODEL_NAME = os.getenv("AI_MODEL_NAME")
 HOST = "ark.cn-beijing.volces.com"
 PATH = "/api/v3/chat/completions"
+
+
+
+DB_CONFIG = {
+    "host": "1.92.109.205",
+    "user": "binfinity",
+    "password": "Cb050328_password",
+    "database": "ykuhelp",
+    "charset": "utf8mb4"
+}
