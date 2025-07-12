@@ -17,11 +17,9 @@ class Config:
 # AI 配置
 API_KEY = os.getenv("API_KEY")
 AI_MODEL_NAME = os.getenv("AI_MODEL_NAME")
-HOST = os.getenv("HOST")
-PATH = os.getenv("PATH")
-
-
-
+HOST = "ark.cn-beijing.volces.com"
+PATH = "/api/v3/chat/completions"
+ 
 
 # 资源文件存储基础路径
-RESOURCE_BASE_DIR = "~/桌面/yku_helper/"  # 根据实际情况修改
+RESOURCE_BASE_DIR = "~/桌面/yku_helper/"  

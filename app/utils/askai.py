@@ -65,3 +65,4 @@ def ask_ai(prompt: str, api_key: str = API_KEY, model: str = AI_MODEL_NAME) -> s
         logging.debug(f"响应内容: {data.decode('utf-8') if 'data' in locals() else '[无响应]'}")
         return "error"
 
+# ask_ai("你好，AI助手！")  # 测试调用
