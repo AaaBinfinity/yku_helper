@@ -1,8 +1,7 @@
 # 忽略 Python 虚拟环境
 .venv/
 
-getpsw/
-
+.env
 
 # Python 缓存文件
 __pycache__/
@@ -22,3 +21,5 @@ Thumbs.db
 # 应用日志文件
 app/log/*
 !app/log/.gitkeep
+
+logtools/

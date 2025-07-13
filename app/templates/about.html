@@ -1,143 +1,170 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>关于YKU小助手</title>
-    <style>
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f9f9f9;
-        }
-        
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-        }
-        
-        h2 {
-            color: #2980b9;
-            margin-top: 25px;
-            padding-left: 10px;
-            border-left: 4px solid #3498db;
-        }
-        
-        .back-btn {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-        
-        .back-btn:hover {
-            background-color: #2980b9;
-        }
-        
-        .section {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        ul {
-            padding-left: 20px;
-        }
-        
-        li {
-            margin-bottom: 8px;
-        }
-        
-        strong {
-            color: #2c3e50;
-        }
-        
-        img {
-            max-width: 300px;
-            display: block;
-            margin: 15px auto;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        
-        small {
-            display: block;
-            text-align: center;
-            margin-top: 30px;
-            color: #7f8c8d;
-            font-size: 14px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>关于 YKU 小助手</title>
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --primary-dark: #2980b9;
+      --bg-light: #f9f9f9;
+      --card-bg: #ffffff;
+      --text-color: #333;
+      --muted-color: #7f8c8d;
+      --radius: 8px;
+      --shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    body {
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 24px;
+      background-color: var(--bg-light);
+    }
+
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--primary-color);
+      font-size: 2em;
+    }
+
+    h2 {
+      color: var(--primary-dark);
+      margin: 24px 0 12px;
+      border-left: 4px solid var(--primary-color);
+      padding-left: 12px;
+      font-size: 1.4em;
+    }
+
+    .section {
+      background-color: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .back-btn {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: var(--radius);
+      font-size: 15px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-bottom: 20px;
+    }
+
+    .back-btn:hover {
+      background-color: var(--primary-dark);
+    }
+
+    ul, ol {
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    img {
+      max-width: 50%;
+      height: auto;
+      margin: 16px auto;
+      display: block;
+      border-radius: 6px;
+      box-shadow: var(--shadow);
+    }
+
+    small {
+      display: block;
+      text-align: center;
+      margin-top: 40px;
+      color: var(--muted-color);
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 16px;
+      }
+
+      .back-btn {
+        font-size: 14px;
+        padding: 8px 14px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>关于 YKU 小助手</h1>
-    
-    <button class="back-btn" onclick="window.history.back()">⬅ 返回</button>
-    
-    <div class="section">
-        <h2>🎓 项目简介</h2>
-        <p><strong>YKU 小助手</strong> 是一个由数科在校学生独立开发的非官方教学辅助平台，致力于为同学们提供更智能、便捷的校园学习体验。平台通过技术创新解决了官方系统中的诸多痛点，让成绩查询、学业分析等日常学习事务变得更加高效愉悦。</p>
-    </div>
-    
- 
-    
-    <div class="section">
-        <h2>🔧 功能特色</h2>
-        
-        <ul>
-            <li>成绩查询：支持筛选、搜索、挂科标记</li>
-            <li>成绩分析：AI 模型提供智能分析与建议</li>
-            <li>登录优化：比教务系统的登录界面漂亮一点</li>
-            <li>后续计划：课程表、选课助手、错题系统等</li>
-        </ul>
-    </div>
-    
-    <div class="section">
-        <h2>📢 重要声明</h2>
-        <p>本平台是<strong>非官方</strong>的学生个人开发项目，所有功能均基于用户授权访问原则：</p>
-        <ol>
-            <li><strong>数据安全</strong>：本站不会泄露任何用户账号密码信息</li>
-            <li><strong>隐私保护</strong>：严格遵守数据最小化原则，不收集非必要信息</li>
-            <li><strong>免责条款</strong>：仅供参考使用，重要决策请以官方系统为准</li> 
-        </ol>
-    </div>
-    
-    <div class="section">
-        <h2>☕ 支持开发者</h2>
-        <p>这个项目由我利用课余时间独立开发和维护，如果你觉得有帮助，不妨请我喝杯咖啡：</p>
-        <img src="https://img.infinitylog.top/20250424/default/46_wx.jpg" alt="微信赞赏码">
-        <p>你的支持将帮助我持续优化服务，开发更多实用功能！</p>
-    </div>
-    
-    <div class="section">
-        <h2>📮 加入我们</h2>
-        <p>我们欢迎各种形式的参与和支持：</p>
-        <p><strong>反馈建议</strong><br>随时告诉我们你的使用体验和建议</p>
-        <p><strong>技术贡献</strong><br>前端/后端/UI设计等各类技术人才招募中</p>
-        <p><strong>校园推广</strong><br>帮助更多同学了解和使用这个工具</p>
-        
-        <p><strong>联系方式</strong>：</p>
-        <ul>
-            <li>开发者：Binfinity</li>
-            <li>邮箱：binfinity@qq.com</li>
-            <li>微信：15042666684</li> 
-        </ul>
-    </div>
-    
-    <small>最后更新：2025年7月10日 | 版本号：v2.1.0</small>
+  <h1>关于 YKU 小助手</h1>
+
+  <button class="back-btn" onclick="window.history.back()">⬅ 返回</button>
+
+  <div class="section">
+    <h2>🎓 项目简介</h2>
+    <p><strong>YKU 小助手</strong> 是一个由数科在校学生独立开发的非官方教学辅助平台，致力于为同学们提供更智能、便捷的校园学习体验。平台通过技术创新解决了官方系统中的诸多痛点，让成绩查询、学业分析等日常学习事务变得更加高效愉悦。</p>
+  </div>
+
+  <div class="section">
+    <h2>🔧 功能特色</h2>
+    <ul>
+      <li>成绩查询：支持筛选、搜索、挂科标记</li>
+      <li>成绩分析：AI 模型提供智能分析与建议</li>
+      <li>登录优化：比教务系统的登录界面漂亮一点</li>
+      <li>后续计划：课程表、选课助手、错题系统等</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>📢 重要声明</h2>
+    <p>本平台是<strong>非官方</strong>的学生个人开发项目，所有功能均基于用户授权访问原则：</p>
+    <ol>
+      <li><strong>数据安全</strong>：本站不会泄露任何用户账号密码信息</li>
+      <li><strong>隐私保护</strong>：严格遵守数据最小化原则，不收集非必要信息</li>
+      <li><strong>免责条款</strong>：仅供参考使用，重要决策请以官方系统为准</li>
+    </ol>
+  </div>
+
+  <div class="section">
+    <h2>☕ 支持开发者</h2>
+    <p>这个项目由我利用课余时间独立开发和维护，如果你觉得有帮助，不妨请我喝杯咖啡：</p>
+    <img src="https://img.infinitylog.top/20250424/default/46_wx.jpg" alt="微信赞赏码" />
+    <p>你的支持将帮助我持续优化服务，开发更多实用功能！</p>
+  </div>
+
+<div class="section">
+  <h2>📮 加入我们</h2>
+  <p>我们欢迎各种形式的参与和支持：</p>
+  <p><strong>反馈建议</strong><br>随时告诉我们你的使用体验和建议</p>
+  <p><strong>技术贡献</strong><br>前端/后端/UI设计等各类技术人才招募中</p>
+  <p><strong>校园推广</strong><br>帮助更多同学了解和使用这个工具</p>
+
+  <p><strong>联系方式</strong>：</p>
+<ul style="list-style: none; padding-left: 0;">
+  <li><i class="fas fa-user"></i> 👤 开发者：Binfinity</li>
+  <li><i class="fas fa-envelope"></i> 📧 邮箱：
+    <a href="mailto:binfinity@qq.com">binfinity@qq.com</a>
+  </li>
+  <li><i class="fab fa-weixin"></i> 💬 微信：15042666684</li>
+  <li><i class="fab fa-github"></i> 🐱 GitHub：
+    <a href="https://github.com/AaaBinfinity/yku_helper" target="_blank" rel="noopener noreferrer">
+      github.com/AaaBinfinity/yku_helper
+    </a>
+  </li>
+</ul>
+
+</div>
+
+  <small>最后更新：2025年7月10日 ｜ 版本号：v2.1.0</small>
 </body>
 </html>
