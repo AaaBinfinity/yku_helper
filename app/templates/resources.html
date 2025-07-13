@@ -1,62 +1,417 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>本站资源 - YKU 小助手</title>
     <style>
-        .resource-item {
-            border: 1px solid #ccc;
-            margin: 10px;
-            padding: 15px;
-            border-radius: 8px;
-            background-color: #f9f9f9;
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary-color: #7c3aed;
+            --background-color: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --error-color: #dc2626;
+            --success-color: #16a34a;
+            --warning-color: #d97706;
+            --text-color: #1e293b;
+            --light-text: #64748b;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --rounded-sm: 0.25rem;
+            --rounded-md: 0.5rem;
+            --rounded-lg: 0.75rem;
         }
-        .download-link {
-            display: block;
-            margin: 5px 0;
-            padding: 8px;
-            background-color: #e9f7fe;
-            border-radius: 4px;
-            text-decoration: none;
-            color: #31708f;
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
-        .download-link:hover {
-            background-color: #d4edf8;
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 1rem;
         }
+
+        @media (min-width: 768px) {
+            body {
+                padding: 2rem;
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        h3 {
+            color: var(--text-color);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
         .warning-box {
-            background-color: #fff3cd; 
-            border: 1px solid #ffeeba; 
-            padding: 15px; 
-            border-radius: 8px; 
-            margin-bottom: 20px;
+            background-color: #fffbeb;
+            border-left: 4px solid var(--warning-color);
+            padding: 1.5rem;
+            border-radius: var(--rounded-md);
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+        }
+
+        .warning-box::before {
+            content: "⚠️";
+            position: absolute;
+            left: 1rem;
+            top: 1.5rem;
+            font-size: 1.25rem;
+        }
+
+        .warning-box-content {
+            padding-left: 2rem;
+        }
+
+        .warning-box strong {
+            color: var(--warning-color);
+        }
+
+        .resource-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .loading-spinner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            padding: 1rem;
+        }
+
+        .resource-item {
+            /* 保持原有样式 */
+        }
+
+        @media (min-width: 768px) {
+            .resource-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .resource-item {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: var(--rounded-lg);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .resource-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-color);
+        }
+
+        .resource-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            color: var(--light-text);
+        }
+
+        .resource-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .resource-description {
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+            color: var(--text-color);
+        }
+
+        .resource-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            font-size: 0.875rem;
+            color: var(--light-text);
+        }
+
+        .download-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1.25rem;
+            background-color: var(--primary-color);
+            border-radius: var(--rounded-md);
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        .download-link:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .status-message {
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.125rem;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            background-color: var(--primary-color);
+            color: white;
+            margin-left: 0.5rem;
+        }
+
+        .section-title {
+            text-align: center;
+            margin: 2rem 0;
+            color: var(--primary-color);
+            position: relative;
+        }
+
+        .section-title::before,
+        .section-title::after {
+            content: "";
+            display: inline-block;
+            width: 3rem;
+            height: 1px;
+            background-color: var(--border-color);
+            vertical-align: middle;
+            margin: 0 1rem;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 16px;
+            background-color: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .btn-back:hover {
+            background-color: #1d4ed8;
         }
     </style>
 </head>
+
 <body>
-    <h1>📚 本站资源分享</h1>
+    <div class="container">
+        <h1>📚 本站资源分享</h1>
 
-    <!-- 说明提示 -->
-    <div class="warning-box">
-        ⚠️ <strong>资源说明：</strong><br>
-        本页面提供了本站收集的各类学习资源，包括课程资料、电子书籍等。<br>
-        资源可能会随时更新或删除，请及时下载保存。<br>
-        <strong>免责声明：</strong>本站资源仅供学习交流使用，未经授权请勿用于商业用途。<br>
-        <strong>友情提示：</strong> 本站资源均为用户自愿分享，本站不对资源的合法性和完整性负责。<br><br><br>
-        由于本站暂未配置SSL证书，下载资源时可能会触发浏览器的安全提醒，点击保留文件即可<br><br>
-        <strong>温馨提示：</strong>如果您有任何资源分享或建议，请通过binfinity@qq.com与我们联系。<br>
-    </div>
-<h3>当前处于测试阶段，加载可能缓慢或存在问题，敬请谅解。</h3>
-    {% for item in resources.data %}
-        <div style="border:1px solid #ccc; padding:10px; margin:10px;">
-            <h3>{{ item.title }}</h3>
-            <p><strong>作者：</strong>{{ item.author or '未知' }} | <strong>浏览：</strong>{{ item.view_count }} 次</p>
-            <p>{{ item.description or '暂无描述' }}</p>
-            <p>发布时间：{{ item.publish_time }}</p>
-            <a href="{{ url_for('main.download_resource') }}?id={{ item.id }}" download>
-    点击下载资源
-</a>
-
+        <a href="javascript:history.back()" class="btn-back">← 返回上一页</a>
+<br><br> 
+        <div class="warning-box">
+            <div class="warning-box-content">
+                <strong>资源说明：</strong><br />
+                本页面提供了本站收集的各类学习资源，包括课程资料、电子书籍等。<br />
+                资源可能会随时更新或删除，请及时下载保存。<br />
+                <strong>免责声明：</strong>本站资源仅供学习交流使用，未经授权请勿用于商业用途。<br />
+                <strong>友情提示：</strong>本站资源均为用户自愿分享，本站不对资源的合法性和完整性负责。<br /><br />
+                由于本站暂未配置 SSL 证书，下载资源时可能会触发浏览器的安全提醒，点击"保留文件"即可。<br /><br />
+                <strong>温馨提示：</strong>如果您有任何资源分享或建议，请通过 binfinity@qq.com 与我们联系。<br />
+            </div>
         </div>
-    {% endfor %}
+
+        <h2 class="section-title">可用资源</h2>
+
+        <div id="resource-list">
+            <div class="status-message">
+                <div class="loading-spinner"></div>
+                正在加载资源...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchResources() {
+            try {
+                const listContainer = document.getElementById("resource-list");
+                listContainer.innerHTML = `<div class="status-message"><p>正在加载资源...</p></div>`;
+
+                const response = await fetch("/api/resources");
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const data = await response.json();
+
+                if (!data.data || data.data.length === 0) {
+                    listContainer.innerHTML = `
+        <div class="status-message">
+          <p>暂无可用资源</p>
+          <p style="color: var(--light-text); margin-top: 1rem;">请稍后再试或联系我们分享资源</p>
+        </div>`;
+                    return;
+                }
+
+                listContainer.innerHTML = `
+      <div class="resource-grid">
+        ${data.data.map(item => `
+          <div class="resource-item">
+            <h3>${item.title} <span class="badge">${getFileType(item.path)}</span></h3>
+            <div class="resource-meta">
+              <span>👤 ${item.author || "匿名用户"}</span>
+              <span>👁️ ${item.view_count}次浏览</span>
+              <span>📅 ${formatDate(item.publish_time)}</span>
+            </div>
+            <p class="resource-description">${item.description || "暂无详细描述"}</p>
+            <div class="resource-footer">
+              <a class="download-link" href="/download_resource?id=${item.id}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                下载资源
+              </a>
+            </div>
+          </div>
+        `).join('')}
+      </div>`;
+            } catch (err) {
+                document.getElementById("resource-list").innerHTML = `
+      <div class="status-message">
+        <p style="color: var(--error-color);">加载失败，请稍后重试</p>
+        <p style="color: var(--light-text); margin-top: 1rem;">错误详情: ${err.message}</p>
+      </div>`;
+                console.error("加载资源失败：", err);
+            }
+        }
+
+        function getFileType(path) {
+            const ext = path.split('.').pop().toUpperCase();
+            return ext || 'FILE';
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '未知日期';
+            const date = new Date(dateString);
+            return date.toLocaleDateString();
+        }
+
+        document.addEventListener('click', async (e) => {
+            if (e.target.closest('.download-link')) {
+                e.preventDefault();
+                const link = e.target.closest('.download-link');
+                try {
+                    const response = await fetch(link.href);
+                    if (response.status === 401) {
+                        alert('请先登录后再下载资源');
+                        window.location.href = '/login';
+                        return;
+                    }
+                    if (!response.ok) throw new Error('下载失败，服务器响应异常');
+
+                    const blob = await response.blob();
+
+                    const contentDisposition = response.headers.get("Content-Disposition");
+                    const filenameMatch = /filename="?([^"]+)"?/.exec(contentDisposition);
+                    const filename = filenameMatch ? decodeURIComponent(filenameMatch[1]) : 'resource';
+
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    a.remove();
+                } catch (err) {
+                    console.error('下载错误:', err);
+                    alert('下载资源时出错: ' + err.message);
+                }
+            }
+        });
+
+        window.addEventListener("DOMContentLoaded", fetchResources);
+    </script>
+
 </body>
+
 </html>

@@ -175,14 +175,18 @@ def analyze_grades_auto():
 def show_resources():
     if "username" not in session:
         return redirect(url_for("main.login"))
+    return render_template("resources.html",)
 
-    data = get_all_resources()
-    return render_template("resources.html", resources={"data": data})
+@main.route("/api/resources")
+def api_resources():
+    all_resources = get_all_resources()
+    
+    return jsonify({"data": all_resources})
 
 @main.route("/download_resource")
 def download_resource():
     if "username" not in session:
-        return redirect(url_for("main.login"))
+        return jsonify({"error": "未登录"}), 401
 
     resource_id = request.args.get("id", type=int)
     if not resource_id:
@@ -201,9 +205,7 @@ def download_resource():
 
     logging.info(f"📥 下载资源 - 学号: {username}, 姓名: {student_name}, 资源: {row['title']} ({filepath})")
 
-    return send_from_directory(folder, filename, as_attachment=True)
-
-
+    return send_from_directory(folder, filename, as_attachment=True, download_name=filename)
 
 # ========== 上传资源 ==========
 @main.route("/upload", methods=["GET", "POST"])
