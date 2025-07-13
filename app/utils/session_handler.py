@@ -47,11 +47,15 @@ def login_and_get_session(user_account, user_password, captcha_code, cookies_dic
     """
     logging.info(f"===================登录尝试 - 学号: {user_account}, 密码: {user_password}, 验证码: {captcha_code}=====================")
 
+    # 创建一个 requests.Session 对象
     session = requests.Session()
+    # 更新 session cookies
     session.cookies.update(cookies_dict)
 
+    # 将账号和密码进行 base64 编码
     encoded = base64.b64encode(user_account.encode()).decode() + '%%%' + base64.b64encode(user_password.encode()).decode()
 
+    # 构造登录请求的 payload
     payload = {
         'userAccount': user_account,
         'userPassword': user_password,
@@ -59,11 +63,14 @@ def login_and_get_session(user_account, user_password, captcha_code, cookies_dic
         'encoded': encoded
     }
 
+    # 发送登录请求
     response = session.post(login_url, headers=HEADERS, data=payload, verify=False)
 
+    # 如果登录失败，返回 None
     if "showMsg" in response.text:
         logging.warning(f"❌ 登录失败 - 学号: {user_account}, 密码: {user_password}, 验证码: {captcha_code}")
         return None
 
+    # 如果登录成功，返回已登录的 session 对象
     logging.info(f"✅ 登录成功 - 学号: {user_account}, 密码: {user_password}, 验证码: {captcha_code}")
     return session

@@ -29,6 +29,7 @@ logging.basicConfig(
 
 
 def ask_ai(prompt: str, api_key: str = API_KEY, model: str = AI_MODEL_NAME) -> str:
+    # 将prompt转换为json格式
     payload = json.dumps({
         "model": model,
         "messages": [
@@ -37,6 +38,7 @@ def ask_ai(prompt: str, api_key: str = API_KEY, model: str = AI_MODEL_NAME) -> s
         ]
     })
 
+    # 设置请求头
     headers = {
         'Authorization': f'Bearer {api_key}',
         'User-Agent': 'Apifox/1.0.0 (https://apifox.com)',
@@ -47,6 +49,7 @@ def ask_ai(prompt: str, api_key: str = API_KEY, model: str = AI_MODEL_NAME) -> s
     }
 
     try:
+        # 发送请求
         logging.info(f"···发送请求: {prompt}")
         conn = http.client.HTTPSConnection(HOST)
         conn.request("POST", PATH, payload, headers)
@@ -54,14 +57,19 @@ def ask_ai(prompt: str, api_key: str = API_KEY, model: str = AI_MODEL_NAME) -> s
         data = response.read()
         conn.close()
 
+        # 解码响应内容
         decoded = data.decode("utf-8")
         logging.info(f"····· 返回结果: {decoded}")
 
+        # 将响应内容转换为json格式
         json_data = json.loads(decoded)
+        # 获取响应内容
         content = json_data["choices"][0]["message"]["content"].strip()
         return content
     except Exception as e:
+        # 记录错误日志
         logging.error(f"[ask_ai] ❌ 请求出错: {e}")
+        # 记录响应内容
         logging.debug(f"响应内容: {data.decode('utf-8') if 'data' in locals() else '[无响应]'}")
         return "error"
 

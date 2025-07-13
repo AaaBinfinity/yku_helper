@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -87,12 +88,17 @@
         }
 
         #captcha-img {
-             
-            cursor: pointer;                    /* 鼠标悬停时显示手型，提示可点击 */
-            border: 1px solid var(--border-color); /* 使用 CSS 变量设置边框颜色 */
-            border-radius: 6px;                 /* 圆角边框，美化效果 */
-            background-color: #f8f9fa;          /* 图片加载失败或空白时的背景色 */
-            object-fit: cover;                  /* 保持内容填充容器，同时裁剪溢出部分 */
+
+            cursor: pointer;
+            /* 鼠标悬停时显示手型，提示可点击 */
+            border: 1px solid var(--border-color);
+            /* 使用 CSS 变量设置边框颜色 */
+            border-radius: 6px;
+            /* 圆角边框，美化效果 */
+            background-color: #f8f9fa;
+            /* 图片加载失败或空白时的背景色 */
+            object-fit: cover;
+            /* 保持内容填充容器，同时裁剪溢出部分 */
         }
 
 
@@ -174,7 +180,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .login-footer {
@@ -230,15 +238,16 @@
         }
     </style>
 </head>
+
 <body>
     <div class="login-container">
         <div class="loading-overlay" id="loadingOverlay">
             <div class="spinner"></div>
         </div>
-        
+
         <h1>YKU小助手</h1>
         <p id="error"></p>
-        
+
         <form onsubmit="return login(event)">
             <div class="form-group">
                 <label for="username">学号</label>
@@ -247,7 +256,8 @@
 
             <div class="form-group">
                 <label for="password">密码</label>
-                <input id="password" name="password" type="password" placeholder="请输入密码" autocomplete="current-password">
+                <input id="password" name="password" type="password" placeholder="请输入密码"
+                    autocomplete="current-password">
             </div>
 
             <div class="form-group">
@@ -261,7 +271,7 @@
 
             <button type="submit" class="btn btn-primary">登录</button>
         </form>
-        
+
         <div class="login-footer">
             如有问题请联系教务处
         </div>
@@ -270,7 +280,7 @@
     <script>
         // 全局变量存储验证码标识
         let captchaId = '';
-        
+
         // 刷新验证码
         function refreshCaptcha() {
             fetch("/api/captcha")
@@ -308,7 +318,7 @@
         // 登录处理
         async function login(event) {
             event.preventDefault();
-            
+
             const username = document.getElementById("username").value.trim();
             const password = document.getElementById("password").value;
             const captcha = document.getElementById("captcha").value.trim();
@@ -323,13 +333,13 @@
                 document.getElementById("username").focus();
                 return;
             }
-            
+
             if (!password) {
                 showError("请输入密码");
                 document.getElementById("password").focus();
                 return;
             }
-            
+
             if (!captcha) {
                 showError("请输入验证码");
                 document.getElementById("captcha").focus();
@@ -337,24 +347,24 @@
             }
 
             setLoading(true);
-            
+
             try {
                 const response = await fetch("/api/login", {
                     method: "POST",
-                    headers: { 
+                    headers: {
                         "Content-Type": "application/json",
                         "X-Requested-With": "XMLHttpRequest"
                     },
-                    body: JSON.stringify({ 
-                        username, 
-                        password, 
+                    body: JSON.stringify({
+                        username,
+                        password,
                         captcha,
-                        captchaId 
+                        captchaId
                     })
                 });
 
                 const data = await response.json();
-                
+
                 if (!response.ok) {
                     throw new Error(data.msg || "登录失败");
                 }
@@ -363,7 +373,7 @@
                     // 登录成功处理
                     errorEl.textContent = "登录成功，正在跳转...";
                     errorEl.style.color = 'var(--success-color)';
-                    
+
                     // 延迟跳转让用户看到成功消息
                     setTimeout(() => {
                         window.location.href = data.redirectUrl || "/home";
@@ -386,7 +396,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             refreshCaptcha();
             document.getElementById("username").focus();
-            
+
             // 添加回车键提交支持
             document.querySelectorAll('input').forEach(input => {
                 input.addEventListener('keypress', (e) => {
@@ -399,4 +409,5 @@
         });
     </script>
 </body>
+
 </html>
