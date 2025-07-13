@@ -207,26 +207,7 @@ def download_resource():
 
     return send_from_directory(folder, filename, as_attachment=True, download_name=filename)
 
-# ========== 上传资源 ==========
-@main.route("/upload", methods=["GET", "POST"])
-def upload_resource():
-    if request.method == "POST":
-        title = request.form.get("title")
-        path = request.form.get("path")
-        description = request.form.get("description")
-        author = request.form.get("author")
 
-        if not title or not path:
-            flash("标题和路径为必填项")
-            return redirect(url_for("main.upload_resource"))
-
-        add_resource(title, path, description, author)
-        flash("上传成功")
-        return redirect(url_for("main.show_resources"))
-
-    return render_template("upload_resource.html")
-
-# ========== 公告相关 ==========
 
 @main.route('/api/announcements')
 def get_announcements():
