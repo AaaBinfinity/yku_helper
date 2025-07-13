@@ -20,6 +20,4 @@ AI_MODEL_NAME = os.getenv("AI_MODEL_NAME")
 HOST = "ark.cn-beijing.volces.com"
 PATH = "/api/v3/chat/completions"
  
-
-# 资源文件存储基础路径
-RESOURCE_BASE_DIR = "~/桌面/yku_helper/"  
+ 

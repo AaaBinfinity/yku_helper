@@ -1,13 +1,14 @@
 import os
 import logging
 from flask import Blueprint, abort, flash, render_template, request, redirect, send_from_directory, url_for, session, jsonify
-from datetime import datetime
 from app.utils.resources import add_resource, get_all_resources, get_resource_by_id
 from .utils.session_handler import login_and_get_session, get_captcha_base64
 from .utils.grade_parser import get_grades
 from .utils.student_lookup import get_student_name
 from .utils.askai import ask_ai
 import requests
+from flask import jsonify
+from app.utils.announcements import get_all_announcements
 
 # 日志配置
 log_dir = os.path.join(os.path.dirname(__file__), "log")
@@ -224,25 +225,12 @@ def upload_resource():
     return render_template("upload_resource.html")
 
 # ========== 公告相关 ==========
-announcements = [
-    {
-        "id": 1,
-        "title": "系统维护通知",
-        "content": "教务系统将于 7 月 15 日凌晨 2:00-4:00 进行维护。",
-        "timestamp": "2025-07-12 18:00"
-    },
-    {
-        "id": 2,
-        "title": "资源模块上线",
-        "content": "本站资源分享功能已上线，欢迎使用！",
-        "timestamp": "2025-07-10 09:30"
-    }
-]
 
 @main.route('/api/announcements')
 def get_announcements():
+    data = get_all_announcements()
     return jsonify({
         "code": 0,
         "message": "success",
-        "data": announcements
+        "data": data
     })
