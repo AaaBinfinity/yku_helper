@@ -158,7 +158,9 @@
             justify-content: center;
             gap: 20px;
             margin-top: 30px;
+            flex-wrap: wrap;
         }
+
 
         /* Animations */
         @keyframes fadeIn {
@@ -243,7 +245,7 @@
 
         <p class="welcome-text">
             <i class="fas fa-graduation-cap feature-icon"></i>
-            嗨，同学！欢迎来到 <strong>YKU 小助手</strong>，你的校园学习好帮手！
+            嗨，同学！欢迎来到 <strong>YKU小助手</strong>，你的校园学习好帮手！
         </p>
 
         <h2><i class="fas fa-rocket feature-icon"></i> 快速入口</h2>
@@ -254,19 +256,14 @@
             <a href="#" class="btn">
                 <i class="fas fa-edit"></i> AI 考学宝(即将上线)
             </a>
-
-            <a href="https://jwgl.yku.edu.cn/jsxsd/" class="btn pulse" target="_blank" rel="noopener noreferrer">
-                <i class="fas fa-university"></i> 教务系统
-            </a>
-
             <a href="{{ url_for('main.show_resources') }}" class="btn pulse">
                 <i class="fas fa-book-open"></i> 本站资源
             </a>
-
-
-
             <a href="{{ url_for('main.about') }}" class="btn pulse">
                 <i class="fas fa-info-circle"></i> 关于本站
+            </a>
+            <a href="https://jwgl.yku.edu.cn/jsxsd/" class="btn pulse" target="_blank" rel="noopener noreferrer">
+                <i class="fas fa-university"></i> 教务系统
             </a>
         </div>
 
@@ -312,7 +309,7 @@
 
             <li>
                 <i class="fas fa-calendar-alt feature-icon"></i>
-                <strong>本站资源（优化中）：</strong> 题库资源，辅助复习提分
+                <strong>本站资源：</strong> 题库与资源，辅助复习提分
             </li>
             <li>
                 <i class="fas fa-book feature-icon"></i>
