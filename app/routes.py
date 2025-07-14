@@ -2,7 +2,6 @@ from functools import wraps
 import os
 import logging
 from flask import Blueprint, abort, flash, render_template, request, redirect, send_from_directory, url_for, session, jsonify
-import redis
 from app.utils.resources import add_resource, get_all_resources, get_resource_by_id
 from .utils.session_handler import login_by_key, get_captcha_base64_with_key
 from .utils.grade_parser import get_grades
@@ -11,6 +10,17 @@ from .utils.askai import ask_ai
 import requests
 from flask import jsonify
 from app.utils.announcements import get_all_announcements
+from config import Config
+import redis
+
+rds = redis.Redis(
+    host=Config.REDIS_HOST,
+    port=Config.REDIS_PORT,
+    username=Config.REDIS_USERNAME,
+    password=Config.REDIS_PASSWORD,
+    db=Config.REDIS_DB,
+    decode_responses=True
+)
 
 # 日志配置
 log_dir = os.path.join(os.path.dirname(__file__), "log")
@@ -301,11 +311,3 @@ def get_announcements():
         "data": data
     })
 
-
-rds = redis.Redis(
-    host='localhost',
-    port=6379,
-    username='binfinity',
-    password='123456',
-    decode_responses=True
-)

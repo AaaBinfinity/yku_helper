@@ -1,9 +1,25 @@
 import requests
 import base64
 import uuid
-import redis
 import logging
+import sys
 import os
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(current_dir, "../.."))
+sys.path.append(parent_dir)
+
+from config import *
+import redis
+
+rds = redis.Redis(
+    host=Config.REDIS_HOST,
+    port=Config.REDIS_PORT,
+    username=Config.REDIS_USERNAME,
+    password=Config.REDIS_PASSWORD,
+    db=Config.REDIS_DB,
+    decode_responses=True
+)
 
 # 日志路径配置
 log_dir = os.path.join(os.path.dirname(__file__), '../log')
@@ -19,14 +35,7 @@ logging.basicConfig(
     ]
 )
 
-# Redis 配置
-rds = redis.Redis(
-    host='localhost',
-    port=6379,
-    username='binfinity',
-    password='123456',
-    decode_responses=True
-)
+
 
 captcha_url = 'https://jwgl.yku.edu.cn/jsxsd/verifycode.servlet'
 login_url = 'https://jwgl.yku.edu.cn/jsxsd/xk/LoginToXk'

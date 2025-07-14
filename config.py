@@ -13,7 +13,11 @@ DB_CONFIG = {
 }
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY")
-
+    REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+    REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
+    REDIS_USERNAME = os.getenv("REDIS_USERNAME", None)
+    REDIS_PASSWORD = os.getenv("REDIS_PASSWORD", None)
+    REDIS_DB = int(os.getenv("REDIS_DB", 0))
 # AI 配置
 API_KEY = os.getenv("API_KEY")
 AI_MODEL_NAME = os.getenv("AI_MODEL_NAME")
