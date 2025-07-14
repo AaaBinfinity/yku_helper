@@ -26,7 +26,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 95%;
             margin: 0 auto;
             animation: fadeIn 0.8s ease-out;
         }
@@ -251,20 +251,29 @@
         <h2><i class="fas fa-rocket feature-icon"></i> 快速入口</h2>
         <div class="quick-actions">
             <a href="{{ url_for('main.grades') }}" class="btn pulse">
-                <i class="fas fa-chart-line"></i> 学情画像
+                <i class="fas fa-chart-pie"></i> 学情画像
             </a>
-            <a href="#" class="btn">
-                <i class="fas fa-edit"></i> AI 考学宝(即将上线)
+
+            <a href="#" class="btn disabled" title="即将上线">
+                <i class="fas fa-robot"></i> AI 考学宝
             </a>
+
             <a href="{{ url_for('main.show_resources') }}" class="btn pulse">
-                <i class="fas fa-book-open"></i> 本站资源
+                <i class="fas fa-folder-open"></i> 本站资源
             </a>
+
+            <a href="{{ url_for('main.discussion') }}" class="btn pulse">
+                <i class="fas fa-comments"></i> 匿名讨论
+            </a>
+
             <a href="{{ url_for('main.about') }}" class="btn pulse">
                 <i class="fas fa-info-circle"></i> 关于本站
             </a>
+
             <a href="https://jwgl.yku.edu.cn/jsxsd/" class="btn pulse" target="_blank" rel="noopener noreferrer">
-                <i class="fas fa-university"></i> 教务系统
+                <i class="fas fa-school"></i> 教务系统
             </a>
+
         </div>
 
 
