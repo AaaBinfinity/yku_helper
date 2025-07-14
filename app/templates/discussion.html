@@ -138,6 +138,7 @@
       margin: 20px auto 0;
       display: flex;
       gap: 12px;
+      position: relative;
     }
 
     #input {
@@ -184,6 +185,49 @@
       margin-top: 12px;
     }
 
+    /* 表情选择器样式 */
+    .emoji-picker {
+      position: absolute;
+      bottom: 60px;
+      right: 0;
+      background: white;
+      border: 1px solid var(--input-border);
+      border-radius: var(--msg-radius);
+      padding: 10px;
+      width: 300px;
+      max-height: 200px;
+      overflow-y: auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      display: none;
+    }
+
+    .emoji-picker.show {
+      display: block;
+    }
+
+    .emoji-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      padding: 5px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .emoji-btn:hover {
+      transform: scale(1.2);
+    }
+
+    .emoji-trigger {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 0 10px;
+      color: var(--primary-color);
+    }
+
     /* 滚动条样式 */
     #messages::-webkit-scrollbar {
       width: 8px;
@@ -220,11 +264,18 @@
       }
 
       #input-area {
-        flex-direction: column;
+        flex-direction: row;
       }
 
       button {
-        width: 100%;
+        width: auto;
+      }
+      
+      .emoji-picker {
+        width: 250px;
+        right: 0;
+        left: 0;
+        margin: 0 auto;
       }
     }
 
@@ -240,6 +291,14 @@
       .notice {
         font-size: 13px;
       }
+      
+      #input-area {
+        gap: 8px;
+      }
+      
+      .emoji-trigger {
+        padding: 0 5px;
+      }
     }
   </style>
 </head>
@@ -252,7 +311,11 @@
   </div>
   <div id="input-area">
     <input type="text" id="input" placeholder="输入消息..." autocomplete="off">
+    <button class="emoji-trigger" id="emoji-trigger">😊</button>
     <button onclick="sendMessage()">发送</button>
+    <div class="emoji-picker" id="emoji-picker">
+      <!-- 表情将通过JS动态添加 -->
+    </div>
   </div>
   <div id="status" class="status">连接中...</div>
 
@@ -261,7 +324,60 @@
     const msgBox = document.getElementById("messages");
     const input = document.getElementById("input");
     const statusEl = document.getElementById("status");
+    const emojiPicker = document.getElementById("emoji-picker");
+    const emojiTrigger = document.getElementById("emoji-trigger");
     const mySno = "{{ session['username'] if session['username'] else '' }}";  // Jinja 注入
+
+    // 常用表情列表
+    const emojis = [
+      '😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇',
+      '🙂', '🙃', '😉', '😌', '😍', '🥰', '😘', '😗', '😙', '😚',
+      '😋', '😛', '😝', '😜', '🤪', '🤨', '🧐', '🤓', '😎', '🥸',
+      '🤩', '🥳', '😏', '😒', '😞', '😔', '😟', '😕', '🙁', '☹️',
+      '😣', '😖', '😫', '😩', '🥺', '😢', '😭', '😤', '😠', '😡',
+      '🤬', '🤯', '😳', '🥵', '🥶', '😱', '😨', '😰', '😥', '😓',
+      '🤗', '🤔', '🤭', '🤫', '🤥', '😶', '😐', '😑', '😬', '🙄',
+      '😯', '😦', '😧', '😮', '😲', '🥱', '😴', '🤤', '😪', '😵',
+      '🤐', '🥴', '🤢', '🤮', '🤧', '😷', '🤒', '🤕', '🤑', '🤠',
+      '😈', '👿', '👹', '👺', '🤡', '💩', '👻', '💀', '☠️', '👽',
+      '👾', '🤖', '🎃', '😺', '😸', '😹', '😻', '😼', '😽', '🙀',
+      '😿', '😾', '🙈', '🙉', '🙊', '💋', '💌', '💘', '💝', '💖',
+      '💗', '💓', '💞', '💕', '💟', '❣️', '💔', '❤️', '🧡', '💛',
+      '💚', '💙', '💜', '🤎', '🖤', '🤍', '💯', '💢', '💥', '💫',
+      '💦', '💨', '🕳️', '💣', '💬', '👁️‍🗨️', '🗨️', '🗯️', '💭', '💤',
+      '👍', '👎', '👌', '✌️', '🤞', '🤟', '🤘', '🤙', '👋', '🤚',
+      '🖐️', '✋', '🖖', '👏', '🙌', '👐', '🤲', '🤝', '🙏', '✍️',
+      '💅', '🤳', '💪', '🦾', '🦿', '🦵', '🦶', '👂', '🦻', '👃',
+      '🧠', '🦷', '🦴', '👀', '👁️', '👅', '👄', '👶', '🧒', '👦',
+      '👧', '🧑', '👨', '👩', '🧔', '👱‍♂️', '👱‍♀️', '🧓', '👴', '👵'
+    ];
+
+    // 初始化表情选择器
+    function initEmojiPicker() {
+      emojis.forEach(emoji => {
+        const btn = document.createElement('button');
+        btn.className = 'emoji-btn';
+        btn.textContent = emoji;
+        btn.onclick = () => {
+          input.value += emoji;
+          input.focus();
+          toggleEmojiPicker();
+        };
+        emojiPicker.appendChild(btn);
+      });
+    }
+
+    // 切换表情选择器显示/隐藏
+    function toggleEmojiPicker() {
+      emojiPicker.classList.toggle('show');
+    }
+
+    // 点击外部关闭表情选择器
+    document.addEventListener('click', (e) => {
+      if (!emojiPicker.contains(e.target) && e.target !== emojiTrigger) {
+        emojiPicker.classList.remove('show');
+      }
+    });
 
     // 连接状态
     socket.on("connect", () => {
@@ -303,7 +419,7 @@
 
       box.className = `msg ${msgClass}`;
       box.innerHTML = `
-        <div>${escapeHtml(msg.content)}</div>
+        <div>${msg.content}</div>
         <div class="timestamp">${formatTime(msg.timestamp)}</div>
       `;
       msgBox.appendChild(box);
@@ -323,15 +439,6 @@
     }
 
     // 辅助函数
-    function escapeHtml(unsafe) {
-      return unsafe
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-
     function formatTime(timestamp) {
       const date = new Date(timestamp);
       return date.toLocaleString('zh-CN', {
@@ -344,7 +451,6 @@
       });
     }
 
-
     // 键盘快捷键支持
     input.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
@@ -355,6 +461,13 @@
     // 页面加载时自动聚焦输入框
     window.addEventListener('load', () => {
       input.focus();
+      initEmojiPicker();
+    });
+
+    // 表情触发器点击事件
+    emojiTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleEmojiPicker();
     });
   </script>
 </body>
