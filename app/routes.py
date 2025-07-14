@@ -313,3 +313,7 @@ def get_announcements():
 @main.route("/grade_charts")
 def show_grade_charts():
     return render_template("grade_charts.html")
+
+@main.route("/discussion")
+def discussion():
+    return render_template("discussion.html")

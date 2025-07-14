@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>匿名讨论</title>
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #f7fafc; }
+    #messages { max-height: 500px; overflow-y: auto; margin-bottom: 1rem; }
+    .msg { margin: 5px 0; padding: 8px; background: #fff; border-radius: 6px; box-shadow: 0 0 4px #ddd; }
+    .timestamp { color: #999; font-size: 0.8em; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <h2>🗣️ 匿名讨论区</h2>
+  <div id="messages"></div>
+  <input type="text" id="input" placeholder="输入消息..." style="width: 80%;">
+  <button onclick="sendMessage()">发送</button>
+
+  <script>
+    const socket = io();
+
+    socket.on("connect", () => {
+      console.log("✅ 已连接服务器");
+    });
+
+    socket.on("new_message", (data) => {
+      const box = document.createElement("div");
+      box.className = "msg";
+      box.innerHTML = `
+        <div>${data.content}</div>
+        <div class="timestamp">${data.timestamp}</div>
+      `;
+      document.getElementById("messages").appendChild(box);
+    });
+
+    function sendMessage() {
+      const input = document.getElementById("input");
+      const content = input.value.trim();
+      if (!content) return;
+      socket.emit("send_message", { content });
+      input.value = "";
+    }
+  </script>
+</body>
+</html>
