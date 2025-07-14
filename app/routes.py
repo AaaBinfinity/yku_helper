@@ -134,11 +134,10 @@ def api_login():
     # 登录成功，保存session信息
     session["username"] = username
     session["student_name"] = student_name
-    
-    # 将cookies存入Redis，设置过期时间(例如1小时)
+
     rds.setex(
         f"user_session:{username}",
-        3600,  # 1小时过期
+        3600,
         str(user_session.cookies.get_dict())
     )
     
@@ -311,3 +310,6 @@ def get_announcements():
         "data": data
     })
 
+@main.route("/grade_charts")
+def show_grade_charts():
+    return render_template("grade_charts.html")

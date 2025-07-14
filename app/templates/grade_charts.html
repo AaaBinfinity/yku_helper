@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>成绩可视化分析 - YKU 小助手</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f5f7fa;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 2rem;
+    }
+    .chart-box {
+      margin-bottom: 50px;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    .chart {
+      width: 100%;
+      height: 400px;
+    }
+    .back-btn {
+      margin-bottom: 20px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <button onclick="history.back()" class="back-btn">⬅ 返回上一级</button>
+  <h1>📊 成绩可视化分析</h1>
+
+  <div class="chart-box">
+    <h2>1️⃣ 各学期平均成绩</h2>
+    <div id="avg-grade-chart" class="chart"></div>
+  </div>
+
+  <div class="chart-box">
+    <h2>2️⃣ 成绩等级分布</h2>
+    <div id="grade-pie-chart" class="chart"></div>
+  </div>
+
+  <div class="chart-box">
+    <h2>3️⃣ 课程性质的平均成绩</h2>
+    <div id="kind-chart" class="chart"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+  <script>
+    function getAverage(nums) {
+      const valid = nums.map(v => parseFloat(v)).filter(n => !isNaN(n));
+      if (valid.length === 0) return 0;
+      return (valid.reduce((a, b) => a + b, 0) / valid.length).toFixed(2);
+    }
+
+    function classify(score) {
+      if (isNaN(score)) return "其他";
+      if (score >= 90) return "优秀";
+      if (score >= 80) return "良好";
+      if (score >= 70) return "中等";
+      if (score >= 60) return "及格";
+      return "不及格";
+    }
+
+    async function fetchGrades() {
+      const params = new URLSearchParams(location.search);
+      const res = await fetch("/api/grades?" + params.toString());
+      const data = await res.json();
+      if (!data.success) {
+        alert("❌ 获取成绩失败：" + (data.message || "未知错误"));
+        return [];
+      }
+      return data.data.grades || [];
+    }
+
+    async function renderCharts() {
+      const grades = await fetchGrades();
+
+      // 1. 各学期平均成绩 - 改为折线图
+      const termMap = {};
+      grades.forEach(row => {
+        const term = row["开课学期"] || "未知";
+        const score = parseFloat(row["成绩"]);
+        if (!termMap[term]) termMap[term] = [];
+        if (!isNaN(score)) termMap[term].push(score);
+      });
+      const terms = Object.keys(termMap).sort();
+      const avgScores = terms.map(term => getAverage(termMap[term]));
+
+      const avgChart = echarts.init(document.getElementById("avg-grade-chart"));
+      avgChart.setOption({
+        title: { text: "各学期平均成绩", left: "center" },
+        tooltip: {},
+        xAxis: { type: 'category', data: terms },
+        yAxis: { type: 'value' },
+        series: [{
+          name: "平均成绩",
+          type: "line",
+          data: avgScores,
+          symbol: 'circle',
+          symbolSize: 8,
+          lineStyle: {
+            width: 3
+          },
+          itemStyle: {
+            borderWidth: 2
+          }
+        }]
+      });
+
+      // 2. 成绩等级分布
+      const levelMap = {
+        "优秀": 0, "良好": 0, "中等": 0, "及格": 0, "不及格": 0, "其他": 0
+      };
+      grades.forEach(row => {
+        const score = parseFloat(row["成绩"]);
+        const level = classify(score);
+        levelMap[level]++;
+      });
+      const pieChart = echarts.init(document.getElementById("grade-pie-chart"));
+      pieChart.setOption({
+        title: { text: "成绩等级分布", left: "center" },
+        tooltip: { trigger: 'item' },
+        legend: { bottom: 0 },
+        series: [{
+          name: "成绩分布",
+          type: "pie",
+          radius: "50%",
+          data: Object.entries(levelMap).map(([k, v]) => ({ name: k, value: v }))
+        }]
+      });
+
+      // 3. 课程性质 → 平均成绩
+      const kindMap = {};
+      grades.forEach(row => {
+        const kind = row["课程性质"] || "未分类";
+        const score = parseFloat(row["成绩"]);
+        if (!kindMap[kind]) kindMap[kind] = [];
+        if (!isNaN(score)) kindMap[kind].push(score);
+      });
+      const kindKeys = Object.keys(kindMap);
+      const kindScores = kindKeys.map(k => getAverage(kindMap[k]));
+
+      const kindChart = echarts.init(document.getElementById("kind-chart"));
+      kindChart.setOption({
+        title: { text: "课程性质 vs 平均成绩", left: "center" },
+        tooltip: {},
+        xAxis: { type: "category", data: kindKeys },
+        yAxis: { type: "value" },
+        series: [{ name: "平均成绩", type: "bar", data: kindScores }]
+      });
+    }
+
+    renderCharts();
+  </script>
+</body>
+</html>

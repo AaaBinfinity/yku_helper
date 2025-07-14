@@ -393,6 +393,8 @@
     </label>
 
     <button type="submit">查询</button>
+
+        <button type="button" id="chart-button">图表分析</button>
 </form>
 
 <br>
@@ -431,6 +433,17 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <script>
+    document.getElementById("chart-button").addEventListener("click", function () {
+    const kksj = document.getElementById("kksj").value;
+    const kcxz = document.getElementById("kcxz").value;
+    const kcmc = document.getElementById("kcmc").value;
+    const xsfs = document.getElementById("xsfs").value;
+
+    const params = new URLSearchParams({ kksj, kcxz, kcmc, xsfs });
+
+    // 跳转到图表分析页面并携带参数
+    window.location.href = "/grade_charts?" + params.toString();
+});
     // 关闭浮窗
 document.getElementById("ai-panel-close").addEventListener("click", function () {
     document.getElementById("ai-panel").style.display = "none";
