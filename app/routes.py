@@ -302,7 +302,6 @@ def get_announcements():
     })
 
 
-# Redis 配置 (需要放在文件顶部，这里为了展示修改部分放在了最后)
 rds = redis.Redis(
     host='localhost',
     port=6379,
