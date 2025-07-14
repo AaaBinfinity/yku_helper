@@ -24,6 +24,26 @@
             line-height: 1.6;
         }
 
+        #ai-analysis-content {
+            line-height: 1.6;
+            padding: 1em;
+            background-color: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            font-family: "Segoe UI", Roboto, sans-serif;
+        }
+
+        #ai-analysis-content h3,
+        h4 {
+            color: #2563eb;
+        }
+
+        #ai-analysis-content code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
         h1 {
             color: var(--primary-color);
             margin-bottom: 1.5rem;
@@ -391,8 +411,10 @@
     <div id="ai-panel">
         <h3>成绩分析结果</h3>
         <div id="ai-analysis-loading" style="color: var(--light-text); display: none;">正在分析中，请稍候...</div>
-        <pre id="ai-analysis-content"></pre>
+        <div id="ai-analysis-content"></div>
+
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <script>
         // 表单提交时调用 loadGrades()
@@ -579,15 +601,17 @@
                 const data = await res.json();
 
                 if (!data.success) {
-                    content.textContent = "❌ 分析失败：" + (data.message || "未知错误");
+                    content.innerHTML = "❌ 分析失败：" + (data.message || "未知错误");
                 } else {
-                    content.textContent = data.analysis;
+                    // 使用 marked 渲染 Markdown 为 HTML
+                    content.innerHTML = marked.parse(data.analysis);
                 }
             } catch (err) {
-                content.textContent = "❌ 请求出错：" + err.message;
+                content.innerHTML = "❌ 请求出错：" + err.message;
             } finally {
                 loading.style.display = "none";
             }
+
         });
     </script>
 
