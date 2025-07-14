@@ -129,10 +129,28 @@
         <h2><span class="emoji">3️⃣</span> 课程性质的平均成绩</h2>
         <div id="kind-chart" class="chart"></div>
     </div>
+
+    <div class="chart-box">
+        <h2><span class="emoji">4️⃣</span> 学分分布雷达图</h2>
+        <div id="credit-radar-chart" class="chart"></div>
+    </div>
+
+    <div class="chart-box">
+        <h2><span class="emoji">5️⃣</span> 成绩-学分关系</h2>
+        <div id="score-credit-chart" class="chart"></div>
+    </div>
+
+    <div class="chart-box">
+        <h2><span class="emoji">6️⃣</span> 学期学分构成</h2>
+        <div id="term-credit-chart" class="chart"></div>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
 <script>
+    // 全局声明图表变量
+    let avgChart, pieChart, kindChart, radarChart, scatterChart, stackedChart;
+
     function getAverage(nums) {
         const valid = nums.map(v => parseFloat(v)).filter(n => !isNaN(n));
         if (valid.length === 0) return 0;
@@ -146,6 +164,29 @@
         if (score >= 70) return "中等";
         if (score >= 60) return "及格";
         return "不及格";
+    }
+
+    function getLevelColor(level) {
+        const colors = {
+            '优秀': '#4cc9f0',
+            '良好': '#4895ef',
+            '中等': '#4361ee',
+            '及格': '#3f37c9',
+            '不及格': '#f72585',
+            '其他': '#adb5bd'
+        };
+        return colors[level] || '#adb5bd';
+    }
+
+    function getKindColor(kind) {
+        const colorMap = {
+            '必修': '#4361ee',
+            '选修': '#4cc9f0',
+            '专业选修': '#3f37c9',
+            '公共课': '#4895ef',
+            '实践': '#560bad'
+        };
+        return colorMap[kind] || `#${Math.floor(Math.random() * 16777215).toString(16)}`;
     }
 
     async function fetchGrades() {
@@ -163,6 +204,25 @@
         const grades = await fetchGrades();
 
         // 1. 各学期平均成绩 - 折线图
+        renderAvgGradeChart(grades);
+
+        // 2. 成绩等级分布 - 饼图
+        renderGradePieChart(grades);
+
+        // 3. 课程性质 → 平均成绩 - 柱状图
+        renderKindChart(grades);
+
+        // 4. 学分分布雷达图
+        renderCreditRadarChart(grades);
+
+        // 5. 成绩-学分关系
+        renderScoreCreditChart(grades);
+
+        // 6. 学期学分构成
+        renderTermCreditChart(grades);
+    }
+
+    function renderAvgGradeChart(grades) {
         const termMap = {};
         grades.forEach(row => {
             const term = row["开课学期"] || "未知";
@@ -173,7 +233,7 @@
         const terms = Object.keys(termMap).sort();
         const avgScores = terms.map(term => getAverage(termMap[term]));
 
-        const avgChart = echarts.init(document.getElementById("avg-grade-chart"));
+        avgChart = echarts.init(document.getElementById("avg-grade-chart"));
         avgChart.setOption({
             title: {
                 text: '各学期平均成绩',
@@ -259,8 +319,9 @@
                 }
             }]
         });
+    }
 
-        // 2. 成绩等级分布 - 饼图
+    function renderGradePieChart(grades) {
         const levelMap = {
             "优秀": 0, "良好": 0, "中等": 0, "及格": 0, "不及格": 0, "其他": 0
         };
@@ -270,7 +331,7 @@
             levelMap[level]++;
         });
 
-        const pieChart = echarts.init(document.getElementById("grade-pie-chart"));
+        pieChart = echarts.init(document.getElementById("grade-pie-chart"));
         pieChart.setOption({
             title: {
                 text: '成绩等级分布',
@@ -328,8 +389,9 @@
                     }))
             }]
         });
+    }
 
-        // 3. 课程性质 → 平均成绩 - 柱状图
+    function renderKindChart(grades) {
         const kindMap = {};
         grades.forEach(row => {
             const kind = row["课程性质"] || "未分类";
@@ -340,7 +402,7 @@
         const kindKeys = Object.keys(kindMap);
         const kindScores = kindKeys.map(k => getAverage(kindMap[k]));
 
-        const kindChart = echarts.init(document.getElementById("kind-chart"));
+        kindChart = echarts.init(document.getElementById("kind-chart"));
         kindChart.setOption({
             title: {
                 text: '课程性质 vs 平均成绩',
@@ -421,21 +483,98 @@
         });
     }
 
-    function getLevelColor(level) {
-        const colors = {
-            '优秀': '#4cc9f0',
-            '良好': '#4895ef',
-            '中等': '#4361ee',
-            '及格': '#3f37c9',
-            '不及格': '#f72585',
-            '其他': '#adb5bd'
-        };
-        return colors[level] || '#adb5bd';
+    function renderCreditRadarChart(grades) {
+        const creditMap = {};
+        grades.forEach(row => {
+            const kind = row["课程性质"] || "未分类";
+            const credit = parseFloat(row["学分"]) || 0;
+            if (!creditMap[kind]) creditMap[kind] = 0;
+            creditMap[kind] += credit;
+        });
+
+        radarChart = echarts.init(document.getElementById("credit-radar-chart"));
+        radarChart.setOption({
+            title: {text: '学分分布雷达图', left: 'center'},
+            tooltip: {trigger: 'item'},
+            radar: {
+                indicator: Object.keys(creditMap).map(k => ({name: k, max: Math.max(...Object.values(creditMap)) + 2})),
+                splitArea: {show: false}
+            },
+            series: [{
+                type: 'radar',
+                data: [{value: Object.values(creditMap), name: '学分分布'}],
+                areaStyle: {color: 'rgba(67, 97, 238, 0.4)'}
+            }]
+        });
+    }
+
+    function renderScoreCreditChart(grades) {
+        const scatterData = grades.map(row => ({
+            name: row["课程名称"],
+            value: [parseFloat(row["学分"]) || 0, parseFloat(row["成绩"]) || 0]
+        })).filter(item => !isNaN(item.value[1]));
+
+        scatterChart = echarts.init(document.getElementById("score-credit-chart"));
+        scatterChart.setOption({
+            title: {text: '成绩-学分关系', left: 'center'},
+            tooltip: {
+                formatter: params => `${params.data.name}<br/>学分: ${params.value[0]}<br/>成绩: ${params.value[1]}`
+            },
+            xAxis: {name: '学分', type: 'value'},
+            yAxis: {name: '成绩', min: 0, max: 100},
+            visualMap: {
+                top: 10,
+                right: 10,
+                dimension: 1,
+                min: 0,
+                max: 100,
+                inRange: {color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#fdae61', '#f46d43', '#d73027']}
+            },
+            series: [{
+                type: 'scatter',
+                symbolSize: val => Math.sqrt(val[0]) * 8,
+                data: scatterData,
+                label: {show: true, formatter: params => params.data.value[1] > 85 ? params.data.name : ''}
+            }]
+        });
+    }
+
+    function renderTermCreditChart(grades) {
+        const termCreditMap = {};
+        grades.forEach(row => {
+            const term = row["开课学期"] || "未知";
+            const kind = row["课程性质"] || "未分类";
+            const credit = parseFloat(row["学分"]) || 0;
+
+            if (!termCreditMap[term]) termCreditMap[term] = {};
+            if (!termCreditMap[term][kind]) termCreditMap[term][kind] = 0;
+            termCreditMap[term][kind] += credit;
+        });
+
+        const terms = Object.keys(termCreditMap).sort();
+        const kinds = [...new Set(grades.map(row => row["课程性质"] || "未分类"))];
+
+        stackedChart = echarts.init(document.getElementById("term-credit-chart"));
+        stackedChart.setOption({
+            title: {text: '学期学分构成', left: 'center'},
+            tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
+            legend: {data: kinds, bottom: 0},
+            grid: {left: '3%', right: '4%', bottom: '15%', containLabel: true},
+            xAxis: {type: 'category', data: terms},
+            yAxis: {type: 'value', name: '学分'},
+            series: kinds.map(kind => ({
+                name: kind,
+                type: 'bar',
+                stack: 'total',
+                data: terms.map(term => termCreditMap[term][kind] || 0),
+                itemStyle: {color: getKindColor(kind)}
+            }))
+        });
     }
 
     // 窗口大小变化时重新调整图表大小
     window.addEventListener('resize', function () {
-        [avgChart, pieChart, kindChart].forEach(chart => {
+        [avgChart, pieChart, kindChart, radarChart, scatterChart, stackedChart].forEach(chart => {
             if (chart) chart.resize();
         });
     });
