@@ -1,167 +1,446 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="UTF-8">
-  <title>成绩可视化分析 - YKU 小助手</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #f5f7fa;
-      padding: 20px;
-    }
-    h1 {
-      margin-bottom: 2rem;
-    }
-    .chart-box {
-      margin-bottom: 50px;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-    .chart {
-      width: 100%;
-      height: 400px;
-    }
-    .back-btn {
-      margin-bottom: 20px;
-      background-color: #2563eb;
-      color: white;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>成绩可视化分析 - YKU 小助手</title>
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --background-color: #f4faff;
+            --secondary-color: #3f37c9;
+            --accent-color: #4cc9f0;
+            --text-color: #2b2d42;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--background-color);
+            padding: 20px;
+            color: var(--text-color);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            text-align: center;
+            font-size: 2.2rem;
+        }
+
+        h2 {
+            color: var(--secondary-color);
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .chart-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .chart-box {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .chart-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .chart {
+            width: 100%;
+            height: 400px;
+        }
+
+        .back-btn {
+            margin-bottom: 25px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateX(-3px);
+        }
+
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .chart-container {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .chart {
+                height: 350px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <button onclick="history.back()" class="back-btn">⬅ 返回上一级</button>
-  <h1>📊 成绩可视化分析</h1>
+<button onclick="history.back()" class="back-btn">
+    <span class="emoji">⬅</span> 返回上一级
+</button>
 
-  <div class="chart-box">
-    <h2>1️⃣ 各学期平均成绩</h2>
-    <div id="avg-grade-chart" class="chart"></div>
-  </div>
+<h1>📊 成绩可视化分析</h1>
 
-  <div class="chart-box">
-    <h2>2️⃣ 成绩等级分布</h2>
-    <div id="grade-pie-chart" class="chart"></div>
-  </div>
+<div class="chart-container">
+    <div class="chart-box">
+        <h2><span class="emoji">1️⃣</span> 各学期平均成绩</h2>
+        <div id="avg-grade-chart" class="chart"></div>
+    </div>
 
-  <div class="chart-box">
-    <h2>3️⃣ 课程性质的平均成绩</h2>
-    <div id="kind-chart" class="chart"></div>
-  </div>
+    <div class="chart-box">
+        <h2><span class="emoji">2️⃣</span> 成绩等级分布</h2>
+        <div id="grade-pie-chart" class="chart"></div>
+    </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
-  <script>
+    <div class="chart-box">
+        <h2><span class="emoji">3️⃣</span> 课程性质的平均成绩</h2>
+        <div id="kind-chart" class="chart"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+<script>
     function getAverage(nums) {
-      const valid = nums.map(v => parseFloat(v)).filter(n => !isNaN(n));
-      if (valid.length === 0) return 0;
-      return (valid.reduce((a, b) => a + b, 0) / valid.length).toFixed(2);
+        const valid = nums.map(v => parseFloat(v)).filter(n => !isNaN(n));
+        if (valid.length === 0) return 0;
+        return (valid.reduce((a, b) => a + b, 0) / valid.length).toFixed(2);
     }
 
     function classify(score) {
-      if (isNaN(score)) return "其他";
-      if (score >= 90) return "优秀";
-      if (score >= 80) return "良好";
-      if (score >= 70) return "中等";
-      if (score >= 60) return "及格";
-      return "不及格";
+        if (isNaN(score)) return "其他";
+        if (score >= 90) return "优秀";
+        if (score >= 80) return "良好";
+        if (score >= 70) return "中等";
+        if (score >= 60) return "及格";
+        return "不及格";
     }
 
     async function fetchGrades() {
-      const params = new URLSearchParams(location.search);
-      const res = await fetch("/api/grades?" + params.toString());
-      const data = await res.json();
-      if (!data.success) {
-        alert("❌ 获取成绩失败：" + (data.message || "未知错误"));
-        return [];
-      }
-      return data.data.grades || [];
+        const params = new URLSearchParams(location.search);
+        const res = await fetch("/api/grades?" + params.toString());
+        const data = await res.json();
+        if (!data.success) {
+            alert("❌ 获取成绩失败：" + (data.message || "未知错误"));
+            return [];
+        }
+        return data.data.grades || [];
     }
 
     async function renderCharts() {
-      const grades = await fetchGrades();
+        const grades = await fetchGrades();
 
-      // 1. 各学期平均成绩 - 改为折线图
-      const termMap = {};
-      grades.forEach(row => {
-        const term = row["开课学期"] || "未知";
-        const score = parseFloat(row["成绩"]);
-        if (!termMap[term]) termMap[term] = [];
-        if (!isNaN(score)) termMap[term].push(score);
-      });
-      const terms = Object.keys(termMap).sort();
-      const avgScores = terms.map(term => getAverage(termMap[term]));
+        // 1. 各学期平均成绩 - 折线图
+        const termMap = {};
+        grades.forEach(row => {
+            const term = row["开课学期"] || "未知";
+            const score = parseFloat(row["成绩"]);
+            if (!termMap[term]) termMap[term] = [];
+            if (!isNaN(score)) termMap[term].push(score);
+        });
+        const terms = Object.keys(termMap).sort();
+        const avgScores = terms.map(term => getAverage(termMap[term]));
 
-      const avgChart = echarts.init(document.getElementById("avg-grade-chart"));
-      avgChart.setOption({
-        title: { text: "各学期平均成绩", left: "center" },
-        tooltip: {},
-        xAxis: { type: 'category', data: terms },
-        yAxis: { type: 'value' },
-        series: [{
-          name: "平均成绩",
-          type: "line",
-          data: avgScores,
-          symbol: 'circle',
-          symbolSize: 8,
-          lineStyle: {
-            width: 3
-          },
-          itemStyle: {
-            borderWidth: 2
-          }
-        }]
-      });
+        const avgChart = echarts.init(document.getElementById("avg-grade-chart"));
+        avgChart.setOption({
+            title: {
+                text: '各学期平均成绩',
+                left: 'center',
+                textStyle: {
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    color: '#4361ee'
+                }
+            },
+            tooltip: {
+                trigger: 'axis',
+                formatter: '{b}<br/>平均成绩: {c}分'
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: terms,
+                axisLine: {
+                    lineStyle: {
+                        color: '#6c757d'
+                    }
+                },
+                axisLabel: {
+                    color: '#495057'
+                }
+            },
+            yAxis: {
+                type: 'value',
+                min: function (value) {
+                    return Math.max(0, value.min - 5);
+                },
+                axisLine: {
+                    show: true,
+                    lineStyle: {
+                        color: '#6c757d'
+                    }
+                },
+                axisLabel: {
+                    color: '#495057',
+                    formatter: '{value}分'
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: '#e9ecef',
+                        type: 'dashed'
+                    }
+                }
+            },
+            series: [{
+                name: "平均成绩",
+                type: "line",
+                data: avgScores,
+                smooth: true,
+                symbol: 'circle',
+                symbolSize: 10,
+                lineStyle: {
+                    width: 4,
+                    color: '#4361ee'
+                },
+                itemStyle: {
+                    color: '#4361ee',
+                    borderColor: '#fff',
+                    borderWidth: 2
+                },
+                areaStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        {offset: 0, color: 'rgba(67, 97, 238, 0.3)'},
+                        {offset: 1, color: 'rgba(67, 97, 238, 0.1)'}
+                    ])
+                },
+                label: {
+                    show: true,
+                    position: 'top',
+                    formatter: '{c}分',
+                    color: '#4361ee',
+                    fontWeight: 'bold'
+                }
+            }]
+        });
 
-      // 2. 成绩等级分布
-      const levelMap = {
-        "优秀": 0, "良好": 0, "中等": 0, "及格": 0, "不及格": 0, "其他": 0
-      };
-      grades.forEach(row => {
-        const score = parseFloat(row["成绩"]);
-        const level = classify(score);
-        levelMap[level]++;
-      });
-      const pieChart = echarts.init(document.getElementById("grade-pie-chart"));
-      pieChart.setOption({
-        title: { text: "成绩等级分布", left: "center" },
-        tooltip: { trigger: 'item' },
-        legend: { bottom: 0 },
-        series: [{
-          name: "成绩分布",
-          type: "pie",
-          radius: "50%",
-          data: Object.entries(levelMap).map(([k, v]) => ({ name: k, value: v }))
-        }]
-      });
+        // 2. 成绩等级分布 - 饼图
+        const levelMap = {
+            "优秀": 0, "良好": 0, "中等": 0, "及格": 0, "不及格": 0, "其他": 0
+        };
+        grades.forEach(row => {
+            const score = parseFloat(row["成绩"]);
+            const level = classify(score);
+            levelMap[level]++;
+        });
 
-      // 3. 课程性质 → 平均成绩
-      const kindMap = {};
-      grades.forEach(row => {
-        const kind = row["课程性质"] || "未分类";
-        const score = parseFloat(row["成绩"]);
-        if (!kindMap[kind]) kindMap[kind] = [];
-        if (!isNaN(score)) kindMap[kind].push(score);
-      });
-      const kindKeys = Object.keys(kindMap);
-      const kindScores = kindKeys.map(k => getAverage(kindMap[k]));
+        const pieChart = echarts.init(document.getElementById("grade-pie-chart"));
+        pieChart.setOption({
+            title: {
+                text: '成绩等级分布',
+                left: 'center',
+                textStyle: {
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    color: '#4361ee'
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b}: {c} ({d}%)'
+            },
+            legend: {
+                orient: 'horizontal',
+                bottom: 0,
+                textStyle: {
+                    color: '#495057'
+                }
+            },
+            series: [{
+                name: "成绩分布",
+                type: "pie",
+                radius: ['40%', '70%'],
+                avoidLabelOverlap: false,
+                itemStyle: {
+                    borderRadius: 10,
+                    borderColor: '#fff',
+                    borderWidth: 2
+                },
+                label: {
+                    show: true,
+                    formatter: '{b}: {c} ({d}%)',
+                    color: '#495057'
+                },
+                emphasis: {
+                    label: {
+                        show: true,
+                        fontSize: '18',
+                        fontWeight: 'bold'
+                    }
+                },
+                labelLine: {
+                    show: true
+                },
+                data: Object.entries(levelMap)
+                    .filter(([_, v]) => v > 0)
+                    .map(([k, v]) => ({
+                        name: k,
+                        value: v,
+                        itemStyle: {
+                            color: getLevelColor(k)
+                        }
+                    }))
+            }]
+        });
 
-      const kindChart = echarts.init(document.getElementById("kind-chart"));
-      kindChart.setOption({
-        title: { text: "课程性质 vs 平均成绩", left: "center" },
-        tooltip: {},
-        xAxis: { type: "category", data: kindKeys },
-        yAxis: { type: "value" },
-        series: [{ name: "平均成绩", type: "bar", data: kindScores }]
-      });
+        // 3. 课程性质 → 平均成绩 - 柱状图
+        const kindMap = {};
+        grades.forEach(row => {
+            const kind = row["课程性质"] || "未分类";
+            const score = parseFloat(row["成绩"]);
+            if (!kindMap[kind]) kindMap[kind] = [];
+            if (!isNaN(score)) kindMap[kind].push(score);
+        });
+        const kindKeys = Object.keys(kindMap);
+        const kindScores = kindKeys.map(k => getAverage(kindMap[k]));
+
+        const kindChart = echarts.init(document.getElementById("kind-chart"));
+        kindChart.setOption({
+            title: {
+                text: '课程性质 vs 平均成绩',
+                left: 'center',
+                textStyle: {
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    color: '#4361ee'
+                }
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                },
+                formatter: '{b}<br/>平均成绩: {c}分'
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: kindKeys,
+                axisLabel: {
+                    interval: 0,
+                    rotate: kindKeys.some(k => k.length > 4) ? 30 : 0,
+                    color: '#495057'
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#6c757d'
+                    }
+                }
+            },
+            yAxis: {
+                type: 'value',
+                min: function (value) {
+                    return Math.max(0, value.min - 5);
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#6c757d'
+                    }
+                },
+                axisLabel: {
+                    color: '#495057',
+                    formatter: '{value}分'
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: '#e9ecef'
+                    }
+                }
+            },
+            series: [{
+                name: '平均成绩',
+                type: 'bar',
+                data: kindScores,
+                itemStyle: {
+                    color: function (params) {
+                        const colors = ['#4361ee', '#3f37c9', '#4cc9f0', '#4895ef', '#560bad'];
+                        return colors[params.dataIndex % colors.length];
+                    },
+                    borderRadius: [4, 4, 0, 0]
+                },
+                label: {
+                    show: true,
+                    position: 'top',
+                    formatter: '{c}分',
+                    color: '#4361ee',
+                    fontWeight: 'bold'
+                },
+                barWidth: '60%'
+            }]
+        });
     }
 
+    function getLevelColor(level) {
+        const colors = {
+            '优秀': '#4cc9f0',
+            '良好': '#4895ef',
+            '中等': '#4361ee',
+            '及格': '#3f37c9',
+            '不及格': '#f72585',
+            '其他': '#adb5bd'
+        };
+        return colors[level] || '#adb5bd';
+    }
+
+    // 窗口大小变化时重新调整图表大小
+    window.addEventListener('resize', function () {
+        [avgChart, pieChart, kindChart].forEach(chart => {
+            if (chart) chart.resize();
+        });
+    });
+
     renderCharts();
-  </script>
+</script>
 </body>
 </html>
