@@ -58,10 +58,10 @@ def get_captcha_base64_with_key():
     img_base64 = base64.b64encode(response.content).decode()
 
     key = str(uuid.uuid4())
-    # 将 cookies 存入 Redis，设置过期时间 5 分钟
-    rds.setex(f"captcha:{key}", 300, str(session.cookies.get_dict()))
 
-    logging.info(f"🧩 获取验证码 - Key: {key}")
+    rds.setex(f"captcha:{key}", 120, str(session.cookies.get_dict()))
+
+    # logging.info(f"🧩 获取验证码 - Key: {key}")
     return img_base64, key
 
 
