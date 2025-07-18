@@ -73,11 +73,12 @@ def login_required(f):
     return decorated_function
 # ========== 路由实现 ==========
 @main.route("/", methods=["GET", "POST"])
-def login():
-    img_base64, captcha_key = get_captcha_base64_with_key()
-    session["captcha_key"] = captcha_key
-    return render_template("login.html", captcha=img_base64)
-
+# def login():
+#     img_base64, captcha_key = get_captcha_base64_with_key()
+#     session["captcha_key"] = captcha_key
+#     return render_template("login.html", captcha=img_base64)
+def error():
+    return render_template("error.html")
 
 @main.route("/grades")
 def grades():
